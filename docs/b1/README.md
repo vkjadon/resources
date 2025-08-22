@@ -14,7 +14,7 @@ npm run dev
 
 ## How Homepage is loaded
 
-The react app locates `index.html` which has <div id="root"></div> tag and another tag to use `main.jsx`. The `main.jsx` tells react to render <App /> function (called components in react) into that `root` div. The component <App /> is defined in `App.jsx`.
+The react app locates `index.html` which has <div id="root"></div> tag and one script tag to load `main.jsx`. The `main.jsx` tells react to render <App /> function (called components in react) into that `root` div. The component <App /> is defined in `App.jsx` which is loaded using `import` in `main.jsx`.
 
 In other words, the content of `App.jsx` is what the user actually sees on the screen. It’s your homepage. You can change this file to customize what shows up.
 

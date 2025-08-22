@@ -234,3 +234,22 @@ the dog vector=[0,1],dog corresponds to 2nd element
 for image labelled as cat the model will interpret cat as vector[1,0].
 
 for image labelled as dog the model will interpret dog as vector[0,1].
+
+## Epoch
+
+In deep learning, we deal with huge data that may not be processed in one go. We handle the entire data by dividing the dataset in smaller group called batches. The batch size is the number of training examples processed in one iteration.
+
+One iteration refers to a single update step of the model's parameters (weights and biases). This happens after the model processes one batch of training data and computes the gradient of the loss function with respect to the model's parameters, followed by an optimization step (e.g., using gradient descent).
+
+This arrangement lead to introduce the term Epoch. An epoch refers to one complete pass through the entire training dataset by the model.
+
+Let us understand this by a simple example:
+
+Total training examples = 200
+
+Let's assume a batch size of = 25
+
+It takes 8 iterations to process all 200 training examples because each iteration processes 25 examples (one batch).
+Each iteration updates the model parameters once. After 8 iterations, the model has seen all 200 examples, completing 1 epoch.
+
+If you train for 40 iterations, 5 epoch will be completed and this means the training process has gone through the dataset 5 times.
