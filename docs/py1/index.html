@@ -1,53 +1,71 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>Vite+React:Homepage</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" />
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vite+React:Homepage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css"
+    />
     <style>
       /* Optional: nicer wide layout for equations */
-      .content { max-width: 1000px; }
-      .markdown-section { overflow-wrap: anywhere; }
+      .content {
+        max-width: 1000px;
+      }
+      .markdown-section {
+        overflow-wrap: anywhere;
+      }
     </style>
-</head>
-<body>
-  <!-- This is essential -->
-  <div id="app">Loading...</div>
+  </head>
+  <body>
+    <!-- This is essential -->
+    <div id="app">Loading...</div>
 
-  <!-- Docsify configuration -->
-  <script>
-    window.$docsify = {
-      name: 'Python Special Functions',
-      repo: '',
-      loadSidebar: true,      // Enable sidebar
-      subMaxLevel: 3,         // optional: show nested headers
-      loadNavbar: false,      // optional: disable top nav
-      plugins: [
-        function (hook) {
-          hook.doneEach(function() {
-            MathJax.typesetPromise();
-          });
-        }
-      ]
-    };
-  </script>
-
-  <!-- Docsify script -->
-  <!-- MathJax -->
-  <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
+    <!-- Docsify configuration -->
+    <script>
+      window.$docsify = {
+        name: 'Python Special Functions',
+        repo: '',
+        loadSidebar: true,      // Enable sidebar
+        subMaxLevel: 3,         // optional: show nested headers
+        loadNavbar: false,      // optional: disable top nav
+        copyCode: {
+        buttonText : "📋 Copy",      // text on the button
+        errorText  : "✖ Failed",
+        successText: "✔ Copied!"
       },
-      svg: { fontCache: 'global' }
-    };
-  </script>
-<!-- 1) Docsify core (no async!) -->
+        plugins: [
+          function (hook) {
+            hook.doneEach(function() {
+              MathJax.typesetPromise();
+            });
+          }
+        ]
+      };
+    </script>
+
+    <!-- Docsify script -->
+    <!-- MathJax -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+        },
+        svg: { fontCache: "global" },
+      };
+    </script>
+    <!-- 1) Docsify core (no async!) -->
     <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
+    
+    <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+
     <!-- 2) MathJax v3 engine (no async/defer; keep order) -->
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <!-- 3) Docsify ⇄ MathJax glue -->
     <script src="https://cdn.jsdelivr.net/npm/docsify-latex@0"></script>
-</body>
+  </body>
 </html>

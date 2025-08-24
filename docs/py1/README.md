@@ -42,6 +42,12 @@ If you have successfully uploaded the `kaggle.json` in the current director, you
 !cp kaggle.json ~/.kaggle/
 !chmod 600 ~/.kaggle/kaggle.json
 ```
+Download datset from kaggle using API of the dataset. You can use the following API to download.
+
+```js
+!kaggle datasets download -d ruchi798/housing-prices-in-metropolitan-areas-of-india
+```
+
 ### Accessing Google Drive
 
 1. Click on the Drive button in the Files top menu(the last of three icons).
@@ -52,11 +58,7 @@ If you have successfully uploaded the `kaggle.json` in the current director, you
 `drive.mount('/content/drive')`
 5. A new directory(folder) with the name `drive` will appear.
 
-Download datset from kaggle using API of the dataset. You can use the following API to download.
 
-```js
-!kaggle datasets download -d ruchi798/housing-prices-in-metropolitan-areas-of-india
-```
 ## Handling `import`
 
 In Python there are three method used to import a module.  
