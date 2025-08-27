@@ -1,5 +1,1 @@
-* [Add folders in `src`](README.md#add-two-folders-in-scr-folder)
-* [Folders in `pages`](README.md#add-three-folders-in-the-pages-folder-below)
-* [Folders in `components`](README.md#add-three-folders-in-the-components-folder-as-below)
-* [Mount Home Page and Navbar Component](README.md#mount-home-page-and-navbar-component)
-* [Updating Navbar.css](README.md#updating-navbarcss)
+* [Click to Show Topics](README.md)

@@ -27,11 +27,15 @@ $\hat{y}^{(i)} = wx^{(i)}+b $
 
 $m=8; nx=1$
 
+$nx$ is the number of input features.
+
 Import the required modules
+
 ```js
 import numpy as np
 from matplotlib import pyplot as plt
 ```
+Size is the input array and price is the label array.
 
 ```js
 nx=1
@@ -42,10 +46,11 @@ m=price.shape[0]
 print(m)
 ```
 > 8
+
 ## Setting the Matrices as per Notation
 For $nx$ features and $m$ training examples, we can write the linear model as below:
 
-$\hat{\mathbf{y}} = \mathbf{w^T X+b}$
+$\hat{\mathbf{y}} = \mathbf{w X+b}$
 
 The correct matrix notations are explained as under:
 
@@ -59,11 +64,12 @@ The correct matrix notations are explained as under:
 
 ```js
 #Reshaping the Input
-X=size.reshape(1,m)
+X=size.reshape(nx,m)
 y=price.reshape(1,m)
 ```
 > (8,)  
 > (8,)
+
 - The weight matrix $\mathbf{w}$ and $\mathbf{b}$ are arranged as per below shapes to facilitate the vector and broadcasting operation.
 
   $\mathbf{w}$.shape=($nx,1$)
@@ -73,12 +79,12 @@ y=price.reshape(1,m)
 ```js
 #Initializing Weights and Biases
 w=np.random.rand(nx).reshape(nx,1)
-b=np.random.rand(nx).reshape(1,1)
+b=np.random.rand(1).reshape(1,1)
 print(X.shape, w.shape, b.shape)
 ```
 > (1, 8) (1, 1) (1, 1)
 
-It is just to reiterate that we write $\hat{\mathbf{y}} = \mathbf{w^T X+b}$ for all the training examples and we write the prediction as $\hat{y} = \mathbf{w^T x+b}$ for a particular training example.
+It is just to reiterate that we write $\hat{\mathbf{y}} = \mathbf{w X+b}$ for all the training examples and we write the prediction as $\hat{y} = \mathbf{w x+b}$ for a particular training example.
  In this case, the shape of the $\mathbf{x}$ is $(nx,1)$ and for one feature it would be $(1,1)$.
 
 We feed training set to the learning algorithm. The algorithm then computes a linear function f(x) that takes size of a house as input and tries to output the estimated price of y for the corresponding house.
@@ -95,7 +101,7 @@ $\hat{y}^{(2)} = wx^{(2)}+b = w(150)+b $      `Second Training Example`.
 $\hat{y}^{(8)} = wx^{(8)}+b = w(5000)+b $     `Eighth Training Example`
 
 ```js
-yhat=np.dot(w.T, X) + b
+yhat=np.multiply(w, X) + b
 print(yhat)
 ```
 > [[59.68973141 89.27801415 118.86629688  148.45457962 296.39599329 592.27882064 1479.9273027 2959.34143945]]
@@ -196,6 +202,13 @@ print(f'Normalized y = {y_norm}')
 ```
 > Normalized X = [[0.02 0.03 0.04 0.05 0.1  0.2  0.5  1.  ]]
 > Normalized y = [[0.05   0.07   0.0975 0.1275 0.1875 0.325  0.525  1.    ]]
+
+
+```js
+def linear(X,w,b):
+  return np.multiply(w,X) + b
+```
+
 ## Final Code
 
 ```js
@@ -240,8 +253,8 @@ plt.plot(xPlot, cost)
 ![Learning Rate](images/output.png)
 
 ```js
-def predict(w,b,x):
-  return w*x+b
+def predict(w,b,X):
+  return w*X + b
 ```
 Let us predict the price of largest size flat. The normalized value would be 1.
 
@@ -249,6 +262,8 @@ Let us predict the price of largest size flat. The normalized value would be 1.
 predict(w,b,1)*(np.max(y))
 ```
 > array([[402.86202767]])
+
+You may also observe that in case we do not normalize the values, the learning become difficult or produces error. Try yourself to develop better intuition about normalization.
 
 ## Linear Regression using `MatplotLib`
 

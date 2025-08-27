@@ -1,6 +1,6 @@
 ## Python Helping Function
 
-There are many built-in functions in the python which helps us in better understanding the different methods available in python. I consider, `type()`, `dir()` and `help()` as some of the very important functions that must be used whenever you need some more clarification in understanding the use of any other methods.
+There are many built-in functions in the python which helps you in better understanding the different methods available in python. I consider, `type()`, `dir()` and `help()` as some of the very important functions that must be used whenever you need some more clarification in understanding the use of any method.
 
 ### type() function
 
@@ -9,6 +9,9 @@ integer_num=10
 float_num = 40.5
 string_model = 'HC-SR04'
 ```
+
+You can yse `type()` buildin function to know the class an object belong to.
+
 ```js
 print(f'The type of `integer_num` is {type(integer_num)}')
 print(f'The type of `float_num` is {type(float_num)}')
@@ -16,11 +19,6 @@ print(f'The type of `sensor_model` is {type(string_model)}')
 ```
 Click [Formatted String](https://docs.python.org/3/tutorial/inputoutput.html) to go to documentation to explore more.
 
-```js
-dict = {"key-1" : "value-1", "key-2" : "value-2"}
-print(type(dict))
-dir(dict)
-```
 We see that `integer_num`, `float_num` and `string_model` belongs to `int`, `float` and the `str` classes respecyively. There many methods and attributes defined in a class. Let us use some of the methods of the `str` class.
 
 ```js
@@ -81,7 +79,7 @@ We will discuss list comprehension in later part of this session with some more 
 
 You should also notice that the code is looping through each of the string inside the list and checking if it does not start with `__`.
 
-Use `getattr(x, n)` when the attribute name is stored in a string (like when looping over `dir(x)`).
+Use `getattr(x, n)` when the attribute name is stored in a string (like when looping over `dir(x)`). **This returns a reference to `x.n`, but not execute this.**
 
 Use dot notation (`x.is_integer`) when you already know the attribute name in code.
 
@@ -109,7 +107,6 @@ print(f"bit_count : {obj.bit_count()}")
 print(f"as_integer_ratio : {obj.as_integer_ratio()}")
 print(f"conjugate :  {obj.conjugate()}")
 print(f"to_bytes : {obj.to_bytes(2, 'big')}")
-print(f"to_bytes : {obj.to_bytes(2, '')}")
 ```
 Click [Integer/Float Class : int](https://docs.python.org/3/library/stdtypes.html#numeric-types-int-float-complex) to go to documentation to explore more.
 
@@ -151,7 +148,6 @@ The expression (lambda a, b: a + b)(1, 2) represents an Immediately Invoked Func
 ```js
 import numpy as np
 
-# Define ReLU using lambda
 relu = lambda x: np.maximum(0, x)
 
 x = np.array([-2, -1, 0, 1, 2])
@@ -161,12 +157,14 @@ print("ReLU Output:", relu(x))
 ```js
 losses = [("modelA", 0.32), ("modelB", 0.28), ("modelC", 0.45)]
 
-# Sort models by loss (ascending)
 sorted_losses = sorted(losses, key=lambda x: x[1])
 print("Sorted Models:", sorted_losses)
 ```
+The key function is applied to each element of the dictionary to decide the sorting order.
 
 ### Keyword Arguements
+
+Keyword argument is about how the function is called (explicitly naming parameters).
 
 ```js
 #Keyword arguement
@@ -177,6 +175,8 @@ result = expression(3, c=10, b=5)
 print(result)
 ```
 ### Default arguement
+
+Default argument is about how the function is defined (giving default values).
 
 ```js
 #Default arguement
@@ -196,7 +196,7 @@ Comprehensions are a concise way to construct collections (list, set, dict, gene
 [expression `for` item `in` iterable `if` condition]
 ```
 
-Expression is used to produce the value of each item in the new list. The expression may contain if..else block. *for item in iterable* is used to loop over each item in an iterable (like a list, tuple, or range). *if condition* is optional which may be used to filter the items as per the condition when it is **True**.
+Expression is used to produce the value of each item in the new list. The expression may contain if..else block. **for item in iterable** is used to loop over each item in an iterable (like a list, tuple, or range). *if condition* is optional which may be used to filter the items as per the condition when it is **True**.
 
 ```js
 numbers = [1, 2, 3, 4, 5, 6]
@@ -235,6 +235,12 @@ print("Flattened shape of first image:", flattened[0].shape)
 ```
 key_expression and value_expression are used to produce the key and the value of each item in the new list. The expression may contain if..else block. *for item in iterable* is used to loop over each item in an iterable (like a list, tuple, or range). *if condition* is optional which may be used to filter the items as per the condition when it is **True**.
 
+```js
+dict = {"key-1" : "value-1", "key-2" : "value-2"}
+print(type(dict))
+dir(dict)
+```
+
 Execute the following one at a time:
 
 ```js
@@ -255,6 +261,10 @@ print("Results Dict:", results)
 
 A set in Python is an unordered collection of unique elements.It is defined using { } or the set() constructor.No duplicates are allowed and the elements must be immutable (e.g., numbers, strings, tuples).
 
+```
+{ expression for item in iterable if condition }
+```
+
 ```js
 labels = ["cat", "fish", "dog", "fish", "dog", "cat"]
 unique_labels = set(labels)
@@ -265,6 +275,9 @@ for cls in unique_labels:
 
 ### Generator Expression
 Generator expressoin are handy especially when dealing with large datasets. You can load everything into memory rather than storing into memory.
+```
+(expression for item in iterable if condition)
+```
 
 ```js
 gen = (x*x for x in range(5))
@@ -337,6 +350,11 @@ The `double` function doubles the number passed as arguement and `func_fo` add t
 
 **map()** - Applies a function to each element of an iterable and returns a new iterable with the transformed values. map produces a map object, which is an iterator and thus doesn't require generating a new list in memory. This is especially useful with large datasets as it avoids storing all intermediate results in memory at once.
 
+```
+map(function, iterable1, iterable2, ..., iterableN)
+```
+There is no limit on the iterables to pass in the function to map, however, the function you supply must accept the same number of arguments as the number of iterables
+
 ```js
 numbers = [1, 2, 3, 4, 5]
 doubled_map = map(lambda x: x * 2, numbers)
@@ -357,11 +375,16 @@ products = map(lambda x, y: x * y, list1, list2)
 for result in products:
     print("Product:", result)
 ```
-
+In the above example, we have used two lists as iterables, so our function (lambda in this case) should accept two arguements. It is important to note that iteration stops when the shortest iterable is exhausted.
 
 ### `filter()` Function
 
 **filter()** - Filters elements from an iterable based on a condition defined by a function and returns a new iterable with the filtered values.
+
+```
+filter(function, iterable)
+```
+The function must return a boolean (True to keep, False to discard) and iterable can be any sequence, iterator, or generator.
 
 ```js
 numbers = [1, 2, 3, 4, 5]
@@ -383,6 +406,12 @@ print(list(filtered_numbers))
 
 **reduce()** - Applies a function to the elements of an iterable in a cumulative way and returns a single value.
 
+```
+reduce(function, iterable[, initializer])
+```
+
+The function must take two arguments and reduce to a single value and it works only on iterables that can be combined step by step.
+
 ```js
 from functools import reduce
 numbers = [1, 2, 3, 4]
@@ -393,6 +422,12 @@ print(help(reduce))
 ### `sorted()` Function
 
 **sorted()** - Sorts the elements of an iterable based on a comparison defined by a function and returns a new list.
+
+```
+sorted(iterable, *, key=None, reverse=False)
+```
+
+Iterable must contain comparable elements, unless a key is provided. Returns a new list, does not modify original.
 
 ```js
 fruits = ['apple', 'banana', 'cherry', 'durian']
@@ -529,6 +564,10 @@ for item in combined:
 
 The enumerate() function in Python is very handy when you need both the index and the value while iterating over a sequence (like a list, tuple, or string).
 
+```
+enumerate(iterable, start=0)
+```
+
 losses = [0.9, 0.87,0.81, 0.76, 0.63, 0.69, 0.62, 0.58, 0.51, 0.45, 0.41, 0.38, 0.35]
 
 ```js
@@ -591,6 +630,15 @@ all(iterable) : Returns True if all elements in the iterable are truthy, else Fa
 min(iterable) : Returns the smallest element in the iterable.
 
 max(iterable) : Returns the largest element in the iterable.
+
+```
+max(iterable, *, key=None, default)
+max(arg1, arg2, *args, *, key=None)
+
+min(iterable, *, key=None, default)
+min(arg1, arg2, *args, *, key=None)
+```
+
 
 ```js
 nums = [0, 7, 5, 1]

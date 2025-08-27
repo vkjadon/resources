@@ -1,5 +1,7 @@
 # Linear Regression (Multi Features and m Training Examples)
 
+## Matrix notations
+
 We will use $\mathbf{𝐱^{(𝐢)}}$  to denote the feature vector and  $\mathbf{𝐲^{(𝐢)}}$  to denote output variable for $\mathbf{i^{th}}$ training example.
 
 $h(x)=w_1x^{(i)}_1+w_2x^{(i)}_2+.....+w_{nx}x^{(i)}_{nx}+b$
@@ -16,19 +18,20 @@ $\hat{y}^{(i)} =  w_1 x^{(i)}_1  + w_2 x^{(i)}_2 + \cdots + w_{n_x} x^{(i)}_{n_x
 
 Feature vector for $i^{th}$ training example:
 
-$\mathbf{x}^{(i)} = \begin{pmatrix}{x}_1^{(1)} \\ {x}_2^{(2)} \\ \cdots \\ {x}_{nx}^{(m)} \end{pmatrix} $
+$\mathbf{x}^{(i)} = \begin{pmatrix}{x}_1^{(i)} \\ {x}_2^{(i)} \\ \cdots \\ {x}_{nx}^{(i)} \end{pmatrix} $
 
 Feature vector of the problem dataset:
 
 $\mathbf{X} = \begin{pmatrix}\mathbf{x}^{(1)} & \mathbf{x}^{(2)} & \cdots & \mathbf{x}^{(m)}\end{pmatrix}$
 
-$$ \mathbf{X} = \begin{pmatrix}{x}_1^{(1)} & {x}_1^{(2)} & \cdots & {x}_1^{(m)} \\
+$ \mathbf{X} = \begin{pmatrix}{x}_1^{(1)} & {x}_1^{(2)} & \cdots & {x}_1^{(m)} \\
 {x}_2^{(1)} & {x}_2^{(2)} & \cdots & {x}_2^{(m)} \\
 \vdots & \vdots & \cdots & \vdots \\
-{x}_{nx}^{(1)} & {x}_{nx}^{(1)} & \cdots & {x}_{nx}^{(m)} \end{pmatrix} $$
+{x}_{nx}^{(1)} & {x}_{nx}^{(1)} & \cdots & {x}_{nx}^{(m)} \end{pmatrix} $
 
 
-Parameter vector :
+Parameter vectors :
+
 $\mathbf{w} =\begin{pmatrix} {w}_1 \\ {w}_2 \\ \vdots \\ {w}_{nx} \end{pmatrix}, b $
 
 ### Example Data
@@ -62,11 +65,13 @@ $ \mathbf{X} = \begin{pmatrix}
 \end{pmatrix}$
 
 Parameter vector :
+
 $ \mathbf{w} = \begin{pmatrix}
 w_{1} \\ w_{2}
 \end{pmatrix}, b$
 
 Output vector (Given/Labelled) :
+
 $\mathbf {y} = \begin{pmatrix}
 y^{(1)} & y^{(2)} & \cdots & y^{(m)}
 \end{pmatrix} = \begin{pmatrix}
@@ -74,6 +79,7 @@ y^{(1)} & y^{(2)} & \cdots & y^{(m)}
 \end{pmatrix}$
 
 Output vector (Prediction):
+
 $\mathbf {\hat{y}} = \begin{pmatrix}
 \hat{y}^{(1)} & \hat{y}^{(2)} & \cdots & \hat{y}^{(m)}
 \end{pmatrix} $

@@ -18,34 +18,45 @@ Let,
 $m$ : training examples  
 $nx$ : Number of features  
 
+![Logistic Regression Model](images/lr_model.png)
+
 We will use $\mathbf{𝐱}^{(𝐢)}$  to denote the feature vector and  $\mathbf{𝐲}^{(𝐢)}$ to denote output variable.
 Let us write $z$ for the output as linear combinations of weights and input features.
 
 $z^{(i)} = w_1x^{(i)}_1+w_2x^{(i)}_2+.....+w_{nx}x^{(i)}_{nx}+b $   
 
 Feature vector for $i^{th}$ training example:
+
 $\mathbf{x}^{(i)} =\begin{pmatrix}{x}_1^{(i)} \\ {x}_2^{(i)} \\ \vdots \\ {x}_{nx}^{(i)}\end{pmatrix}$   
 
-Output vector of $i^{th}$ training example:   $y^{(i)}$ = (0 or 1)
+Output vector of $i^{th}$ training example:   
+
+$y^{(i)}$ = (0 or 1)
+
+$ \mathbf{y} = \begin{pmatrix} {y}^{(1)} & {y}^{(2)} & \cdots & {y}^{(m)}\end{pmatrix}$ 
 
 Feature vector of the problem dataset:   
 
-$ \mathbf{X} = \begin{pmatrix}\mathbf{x}^{(1)} & \mathbf{x}^{(2)} & \cdots & \mathbf{x}^{(i)}\end{pmatrix}$   
+$ \mathbf{X} = \begin{pmatrix}\mathbf{x}^{(1)} & \mathbf{x}^{(2)} & \cdots & \mathbf{x}^{(m)}\end{pmatrix}$   
 
-$ \mathbf{X} = \begin{pmatrix}{x}_1^{(1)} & {x}_1^{(2)} & \cdots & {x}_1^{(m)} \\ {x}_2^{(1)} & {x}_2^{(2)} & \cdots & {x}_2^{(m)} \\ \vdots & \vdots & \cdots & \vdots \\ {x}_{nx}^{(1)} & {x}_{nx}^{(1)} & \cdots & {x}_{nx}^{(m)} \end{pmatrix}$
+$ \mathbf{X} = \begin{pmatrix}{x}_1^{(1)} & {x}_1^{(2)} & \cdots & {x}_1^{(m)} \\ {x}_2^{(1)} & {x}_2^{(2)} & \cdots & {x}_2^{(m)} \\ \vdots & \vdots & \cdots & \vdots \\ {x}_{nx}^{(1)} & {x}_{nx}^{(2)} & \cdots & {x}_{nx}^{(m)} \end{pmatrix}$
 
 Parameter vector :
+
 $\mathbf{w} =\begin{pmatrix} {w}_1 \\ {w}_2 \\ \vdots \\ {w}_{nx} \end{pmatrix}, b $
 
 ## Generate dataset for Logistic Regression
 
-- Will use `sklearn` classification dataset. It will generate random data. `make_classification` from sklearn datasets, is a utility to generate synthetic classification datasets.
+Before going further deeper into the logistic regression problem, let us first talk about the dataset that you will be using in the session. You can use dataset of your own, but we will introduce `sklearn` library for generating synthetic data for a classification problem.
+
+- Will use `make_classification` from `sklearn` classification dataset to generate random data.
 
 ```js
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import make_classification
 ```
+
 ['make_classification' Documentation](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_classification.html)
 
 *Important Parameters:*
@@ -143,14 +154,34 @@ plt.show()
 
 ![Logistic Regression Model](images/lr_model.png)
 
+```py
+def initialize_with_zeros(features):
+
+    w = np.zeros(features).reshape(features,1)
+    b = 0.0
+
+    return w, b
+```
 $z^{(i)} = \mathbf{w}^T \mathbf{x}^{(i)} + b$  
+
+This can be implemented through the following function
+
+```js
+def forward_linear(x, w, b):
+  z = np.dot(w.T, x) + b
+  return z
+```
 
 In Logistic regression, instead of fitting a regression line, we fit an "S" shaped logistic function, which predicts values between 0 and 1.
 
 $\hat{y}^{(i)} = a^{(i)} = σ (z^{(i)}) = \frac {1}{1+e^{-z^{(i)}}}$  
 
-The squared error function for the logistic function may result in non-convex function. 
+```py
+def activation(z):
+  return 1/(1 + np.exp(-z))
+```
 
+The squared error function for the logistic function may result in non-convex function. 
 
 
 The gradient of the squared error involve products of σ(z), leading to potential non-convexity. Hence the other function is used as loss function for as below:
