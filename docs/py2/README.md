@@ -659,6 +659,69 @@ students = [
     {"name": "S2", "score": 91},
     {"name": "S3", "score": 78}
 ]
+
 topper = max(students, key=lambda s: s["score"])
 print(topper) 
+```
+
+## Python `keyword`
+
+In the Python we have two domains to work with. One; is the doamin of objects, classes, methods, attributes and two; the domain of kewords such as for, in, if, else, def, class, etc..  
+
+We have learnt to inspect these using `help()`, `dir()`, or `type()`. You can use `keyword` library to inspect these kewords.
+
+```js
+import keyword
+print(keyword.kwlist) 
+```
+You can use help("keyword") to seek help on these. It is important that the keywords are to be written as string.
+
+## Iterating over Loop
+
+```js
+pairs = [(1, "a"), (2, "b"), (3, "c")]
+for num, letter in pairs:   
+    print(num, letter)
+```
+Using else in break
+
+```js
+for i in range(3):
+    print(i)
+else:
+    print("Loop completed without break")
+
+for i in range(5):
+    if i == 3:
+        print("Breaking at", i)
+        break
+else:
+    print("This will NOT run because loop broke")
+
+```
+target_list with * (extended unpacking)
+
+```js
+data = [(1, 2, 3), (4, 5, 6)]
+
+for a, *rest in data:   # a = first, rest = remaining
+    print(a, rest)
+```
+
+Iterating dictionary (different target_list forms)
+
+```js
+person = {"name": "Alice", "age": 25}
+
+# Keys
+for key in person:
+    print("Key:", key)
+
+# Values
+for value in person.values():
+    print("Value:", value)
+
+# Key, Value unpacking
+for k, v in person.items():
+    print(k, "->", v)
 ```
