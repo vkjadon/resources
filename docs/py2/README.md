@@ -659,7 +659,6 @@ students = [
     {"name": "S2", "score": 91},
     {"name": "S3", "score": 78}
 ]
-
 topper = max(students, key=lambda s: s["score"])
 print(topper) 
 ```
