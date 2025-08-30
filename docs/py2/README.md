@@ -711,7 +711,7 @@ for a, *rest in data:   # a = first, rest = remaining
 Iterating dictionary (different target_list forms)
 
 ```js
-person = {"name": "Alice", "age": 25}
+person = {"name": "Satish", "age": 25}
 
 # Keys
 for key in person:

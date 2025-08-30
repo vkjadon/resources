@@ -24,10 +24,7 @@ Feature vector of the problem dataset:
 
 $\mathbf{X} = \begin{pmatrix}\mathbf{x}^{(1)} & \mathbf{x}^{(2)} & \cdots & \mathbf{x}^{(m)}\end{pmatrix}$
 
-$ \mathbf{X} = \begin{pmatrix}{x}_1^{(1)} & {x}_1^{(2)} & \cdots & {x}_1^{(m)} \\
-{x}_2^{(1)} & {x}_2^{(2)} & \cdots & {x}_2^{(m)} \\
-\vdots & \vdots & \cdots & \vdots \\
-{x}_{nx}^{(1)} & {x}_{nx}^{(1)} & \cdots & {x}_{nx}^{(m)} \end{pmatrix} $
+$\mathbf{X} = \begin{pmatrix}{x}_1^{(1)} & {x}_1^{(2)} & \cdots & {x}_1^{(m)} \\ {x}_2^{(1)} & {x}_2^{(2)} & \cdots & {x}_2^{(m)} \\ \vdots & \vdots & \cdots & \vdots \\ {x}_{nx}^{(1)} & {x}_{nx}^{(1)} & \cdots & {x}_{nx}^{(m)} \end{pmatrix} $
 
 
 Parameter vectors :
@@ -50,7 +47,7 @@ Features for $3^{rd}$ training example:
 $$x^{(3)}_1=200; x^{(3)}_2=3$$
 
 Features vector for $2^{nd}$ training example:
-$\mathbf{x}^{(2)} =\begin{pmatrix}
+$ \mathbf{x}^{(2)} =\begin{pmatrix}
   150 \\ 2
  \end{pmatrix} $
 

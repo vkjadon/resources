@@ -18,10 +18,16 @@
       loadSidebar: true,      // Enable sidebar
       subMaxLevel: 2,         // optional: show nested headers
       loadNavbar: false,      // optional: disable top nav
+      copyCode: {
+          buttonText: "📋 Copy", // text on the button
+          errorText: "✖ Failed",
+          successText: "✔ Copied!",
+        },
     };
   </script>
 
   <!-- Docsify script -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
 </body>
 </html>
