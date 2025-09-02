@@ -265,38 +265,24 @@ predict(w,b,1)*(np.max(y))
 
 You may also observe that in case we do not normalize the values, the learning become difficult or produces error. Try yourself to develop better intuition about normalization.
 
-## Linear Regression using `MatplotLib`
-
-```js
-X_mpl=X.flatten()
-y_mpl=y.flatten()
-```
-
-```js
-# Using Matplotlib function for linear fiiting
-plt.scatter(X_mpl,y_mpl,color="red")
-linear_model=np.polyfit(X_mpl,y_mpl,1)
-hypothesis =np.poly1d(linear_model)
-print(hypothesis)
-plt.plot(X_mpl,hypothesis(X_mpl))
-plt.show()
-print(hypothesis(5000))
-np.asarray(hypothesis)
-```
-![Linear Regression](images/plt.png)
-
 ## Linear Regression using `SKLearn`
+
+Copy example code 
+
+[Documentation - Example](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html#sklearn.linear_model.LinearRegression)
+
+After executing the code for `X` and `y`, let us again run the code, but, this time use the `X` and `y` you have created for the house price problem. 
 
 ```js
 from sklearn import linear_model
-X=np.array([[100],[150],[200],[250],[500], [1000],[2500],[5000]])
-y=np.array([20,28, 39, 51, 75, 130, 210, 400])
-```
-
-```js
-# Create a Logistic Regression Object, perform Logistic Regression
 lr = linear_model.LinearRegression()
 lr.fit(X, y)
 print(lr.coef_)
 print(lr.intercept_)
+```
+
+This will produce some error. Check documentation of `sklearn` to debug it. 
+
+```js
+lr.score(X, y)
 ```

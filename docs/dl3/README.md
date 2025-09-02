@@ -57,15 +57,11 @@ $ \mathbf{X} = \begin{pmatrix}
 \mathbf{x}^{(1)} & \mathbf{x}^{(2)} & \cdots & \mathbf{x}^{(5)}
 \end{pmatrix}$
 
-$ \mathbf{X} = \begin{pmatrix}
-100 & 150 & 200 & 250 & 500 \\ 1 & 2 & 3 & 4 & 4
-\end{pmatrix}$
+$ \mathbf{X} = \begin{pmatrix} 100 & 150 & 200 & 250 & 500 \\ 1 & 2 & 3 & 4 & 4 \end{pmatrix}$
 
 Parameter vector :
 
-$ \mathbf{w} = \begin{pmatrix}
-w_{1} \\ w_{2}
-\end{pmatrix}, b$
+$ \mathbf{w} = \begin{pmatrix} w_{1} \\ w_{2}\end{pmatrix}, b$
 
 Output vector (Given/Labelled) :
 

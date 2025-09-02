@@ -16,28 +16,28 @@ $0 \le \hat{y} \le 1$
 
 Let,  
 $m$ : training examples  
-$nx$ : Number of features  
+$nx$ : Number of features
 
 ![Logistic Regression Model](images/lr_model.png)
 
-We will use $\mathbf{𝐱}^{(𝐢)}$  to denote the feature vector and  $\mathbf{𝐲}^{(𝐢)}$ to denote output variable.
+We will use $\mathbf{𝐱}^{(𝐢)}$ to denote the feature vector and $\mathbf{𝐲}^{(𝐢)}$ to denote output variable.
 Let us write $z$ for the output as linear combinations of weights and input features.
 
-$z^{(i)} = w_1x^{(i)}_1+w_2x^{(i)}_2+.....+w_{nx}x^{(i)}_{nx}+b $   
+$z^{(i)} = w*1x^{(i)}_1+w_2x^{(i)}_2+.....+w*{nx}x^{(i)}_{nx}+b $
 
 Feature vector for $i^{th}$ training example:
 
-$\mathbf{x}^{(i)} =\begin{pmatrix}{x}_1^{(i)} \\ {x}_2^{(i)} \\ \vdots \\ {x}_{nx}^{(i)}\end{pmatrix}$   
+$\mathbf{x}^{(i)} =\begin{pmatrix}{x}_1^{(i)} \\ {x}_2^{(i)} \\ \vdots \\ {x}_{nx}^{(i)}\end{pmatrix}$
 
-Output vector of $i^{th}$ training example:   
+Output vector of $i^{th}$ training example:
 
 $y^{(i)}$ = (0 or 1)
 
-$ \mathbf{y} = \begin{pmatrix} {y}^{(1)} & {y}^{(2)} & \cdots & {y}^{(m)}\end{pmatrix}$ 
+$ \mathbf{y} = \begin{pmatrix} {y}^{(1)} & {y}^{(2)} & \cdots & {y}^{(m)}\end{pmatrix}$
 
-Feature vector of the problem dataset:   
+Feature vector of the problem dataset:
 
-$ \mathbf{X} = \begin{pmatrix}\mathbf{x}^{(1)} & \mathbf{x}^{(2)} & \cdots & \mathbf{x}^{(m)}\end{pmatrix}$   
+$ \mathbf{X} = \begin{pmatrix}\mathbf{x}^{(1)} & \mathbf{x}^{(2)} & \cdots & \mathbf{x}^{(m)}\end{pmatrix}$
 
 $ \mathbf{X} = \begin{pmatrix}{x}_1^{(1)} & {x}_1^{(2)} & \cdots & {x}_1^{(m)} \\ {x}_2^{(1)} & {x}_2^{(2)} & \cdots & {x}_2^{(m)} \\ \vdots & \vdots & \cdots & \vdots \\ {x}_{nx}^{(1)} & {x}_{nx}^{(2)} & \cdots & {x}_{nx}^{(m)} \end{pmatrix}$
 
@@ -59,7 +59,7 @@ from sklearn.datasets import make_classification
 
 ['make_classification' Documentation](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_classification.html)
 
-*Important Parameters:*
+_Important Parameters:_
 
 - n_samples: (int) The number of samples (default=100)
 - n_features: (int) The total number of features ( default=20)
@@ -68,13 +68,15 @@ from sklearn.datasets import make_classification
 - return_X_y: (bool) If True, a tuple (X, y) instead of a Bunch object is returned (default=True)
 
 ```js
-X, y = make_classification(
-    n_samples=50, 
-    n_features=1, 
-    n_informative=1,
-    n_redundant=0, 
-    n_classes=2, 
-    n_clusters_per_class=1)
+X,
+  (y = make_classification(
+    (n_samples = 50),
+    (n_features = 1),
+    (n_informative = 1),
+    (n_redundant = 0),
+    (n_classes = 2),
+    (n_clusters_per_class = 1)
+  ));
 ```
 
 It is must to assign the values of `n_informative` and `n_redundant` to satisfy the condition:
@@ -83,7 +85,7 @@ It is must to assign the values of `n_informative` and `n_redundant` to satisfy 
 
 Another important condition that must be satisfied is:
 
-> n_classes * n_clusters_per_class $\le$ 2**n_informative
+> n_classes \* n_clusters_per_class $\le$ 2\*\*n_informative
 
 ```js
 def plot_scatter(X, y, dim):
@@ -95,44 +97,46 @@ def plot_scatter(X, y, dim):
     return
   plt.show()
 ```
+
 ```js
-plot_scatter(X, y, 1)
+plot_scatter(X, y, 1);
 ```
 
 ![Dataset](images/dataset1D.png)
 
 **Note** : your data may be different as the samples are randomly generated.
 
-The size of X is (n_samples, n_features), so, in this case, it is (100, 20)
-
-For our use the X matrix needs to be transposed to make it (20,100) i.e ($n_x$, $m$). The 100 is the default features and 20 is the default number of features.
-
 ```js
-X, y = make_classification(
-    n_samples=500, 
-    n_features=2, 
-    n_informative=2,
-    n_redundant=0, 
-    n_classes=3, 
-    n_clusters_per_class=1,
-    random_state=42)
-plot_scatter(X, y, 2)
+X,
+  (y = make_classification(
+    (n_samples = 500),
+    (n_features = 2),
+    (n_informative = 2),
+    (n_redundant = 0),
+    (n_classes = 3),
+    (n_clusters_per_class = 1),
+    (random_state = 42)
+  ));
+plot_scatter(X, y, 2);
 ```
+
 In the figure below, the classes are three in different colors (Yellow, Green and Brown). In this case the plot should exactly match as we have used seed based random generator as specified by `random_state`. The seed is `42`.
 
 ![Dataset](images/dataset2DC3.png)
 
 ```js
-X, y = make_classification(
-    n_samples=500, 
-    n_features=2, 
-    n_informative=2,
-    n_redundant=0, 
-    n_classes=2, 
-    n_clusters_per_class=2,
-    random_state=42)
+X,
+  (y = make_classification(
+    (n_samples = 500),
+    (n_features = 2),
+    (n_informative = 2),
+    (n_redundant = 0),
+    (n_classes = 2),
+    (n_clusters_per_class = 2),
+    (random_state = 42)
+  ));
 
-plot_scatter(X, y, 2)
+plot_scatter(X, y, 2);
 ```
 
 In the figure below, there are 2 classes in two different colors (Red and Blue) and each classes are having two sub-classes. The plot should exactly match in this case also.
@@ -140,16 +144,18 @@ In the figure below, there are 2 classes in two different colors (Red and Blue) 
 ![Dataset](images/dataset2DC2SC2.png)
 
 ```js
-X_orig, y_orig = make_classification(
-    n_samples=50,
-    n_features=1,
-    n_informative=1,
-    n_redundant=0,
-    n_classes=2,
-    n_clusters_per_class=1,
-    random_state=4)
+X_orig,
+  (y_orig = make_classification(
+    (n_samples = 50),
+    (n_features = 1),
+    (n_informative = 1),
+    (n_redundant = 0),
+    (n_classes = 2),
+    (n_clusters_per_class = 1),
+    (random_state = 4)
+  ));
 
-    plot_scatter(X, y, 2)
+plot_scatter(X, y, 2);
 ```
 
 ## Setting Input Data as per Notation
@@ -161,20 +167,33 @@ The shape of the feature matrix is ($m, nx$). For our use, the X matrix needs to
 You can use `train_test_split` method from `sklearn` for this.
 
 ```js
-training_x, testing_x, training_y, testing_y = train_test_split(X_orig, y_orig, train_size=0.8, test_size=0.2, random_state=1)
-m_train=training_x.shape[0]
-m_test=testing_x.shape[0]
+training_x,
+  testing_x,
+  training_y,
+  (testing_y = train_test_split(
+    X_orig,
+    y_orig,
+    (train_size = 0.8),
+    (test_size = 0.2),
+    (random_state = 1)
+  ));
+m_train = training_x.shape[0];
+m_test = testing_x.shape[0];
 
-X_train=training_x.T
-X_test=testing_x.T
+X_train = training_x.T;
+X_test = testing_x.T;
 
-y_train=training_y.reshape(1, m_train)
-y_test=testing_y.reshape(1, m_test)
+y_train = training_y.reshape(1, m_train);
+y_test = testing_y.reshape(1, m_test);
 ```
 
 ## Forward Propogation - Linear Output
 
 Next, is to compute the linear output using $z^{(i)} = \mathbf{w}^T \mathbf{x}^{(i)} + b$ for $i^{th}$ training example. Before imlementing this, you need the initial values of weights and biases. There are number of methods for initialization. For now, you can implement zero initialization with appropriate shape (features in one column).
+
+<div style="background-color:#20212b ; width: 100%; text-align: center;">
+  <img src="images/forward_linear.png" alt="Linear Part" width="300">
+</div>
 
 ```js
 import numpy as np
@@ -187,23 +206,29 @@ def forward_linear(x, w, b):
   z = np.dot(w.T, x) + b
   return z
 ```
+
 ## Forward Propogation - Activated Output
 
 In Logistic regression, instead of fitting a regression line, we fit an "S" shaped logistic function, which predicts values between 0 and 1. This process is the second part of forward propogation and called activation process. The output of this is called activated output represented by $a^{(i)}$. For one neuron problem, this is also the preducted value ($\hat{y}^{(i)}$) for the inilized parameters $w$ and $b$.
 
-$\hat{y}^{(i)} = a^{(i)} = σ (z^{(i)}) = \frac {1}{1+e^{-z^{(i)}}}$  
+$\hat{y}^{(i)} = a^{(i)} = σ (z^{(i)}) = \frac {1}{1+e^{-z^{(i)}}}$
 
 ```js
 def activation(z):
   return 1/(1 + np.exp(-z))
 ```
+
+<div style="background-color:#20212b ; width: 100%; text-align: center;">
+  <img src="images/forward.png" alt="Linear Part" width="500">
+</div>
+
 ## Loss Function
 
 ### Mean Square Error (MSE)
 
 The squared error function for the logistic function may result in non-convex function, hence, the other function is used as loss function for as below:
 
-$$L(a^{(i)}, y^{(i)}) =  - y^{(i)}  \log(a^{(i)}) - (1-y^{(i)} )  \log(1-a^{(i)})$$  
+$$L(a^{(i)}, y^{(i)}) =  - y^{(i)}  \log(a^{(i)}) - (1-y^{(i)} )  \log(1-a^{(i)})$$
 
 The above cost function is covex and hence we can have a global minima.
 
@@ -216,10 +241,10 @@ $J(a,y)=\frac{1}{2m}\sum (a-y)^{2} $
 Let consider a case of one feature ($nx=1$) and $x=1$, $b=0$ and $y=1$; also, ignoring the constant term of $2m$
 
 - Case -1 : y =1
-$$L(a,y)= (\frac {1}{1+e^{-w}}-1)^{2} $$
+  $$L(a,y)= (\frac {1}{1+e^{-w}}-1)^{2} $$
 
 - Case -1 : y =0
-$$L(a,y)= (\frac {1}{1+e^{-w}})^{2} $$
+  $$L(a,y)= (\frac {1}{1+e^{-w}})^{2} $$
 
 ```js
 # w axis
@@ -243,6 +268,7 @@ plt.legend()
 plt.grid(True)
 plt.show()
 ```
+
 ![MSE Loss](images/loss_mse.png)
 
 We can see the curves are not conves at all the points. So, we will assume another function known as binary cross entropy function for our logistic regression problem.
@@ -251,7 +277,7 @@ We can see the curves are not conves at all the points. So, we will assume anoth
 
 The binary cross entropy loss function is as below:
 
-$$L(a^{(i)}, y^{(i)}) =  - y^{(i)}  \log(a^{(i)}) - (1-y^{(i)} )  \log(1-a^{(i)})$$  
+$$L(a^{(i)}, y^{(i)}) =  - y^{(i)}  \log(a^{(i)}) - (1-y^{(i)} )  \log(1-a^{(i)})$$
 
 The above cost function is covex and hence we can have a global minima.
 
@@ -285,10 +311,10 @@ plt.show()
 
 ![MSE-BCE Loss](images/loss_bce.png)
 
- - For y = 1, cross-entropy loss $L(w, y) =  - \log(w)$ is minimized when
-$w \to \infty $
+- For y = 1, cross-entropy loss $L(w, y) =  - \log(w)$ is minimized when
+  $w \to \infty $
 
- - For y = 0, cross-entropy loss $L(w, y) =  - \log(1 - w)$ is minimized when $w \to -\infty $
+- For y = 0, cross-entropy loss $L(w, y) =  - \log(1 - w)$ is minimized when $w \to -\infty $
 
 So it seems like the optimizer would want to send w to both +∞ and −∞ at the same time.
 
@@ -297,29 +323,27 @@ For samples with y=1, the optimizer pushes their w higher and for samples with y
 
 Since all predictions share the same weight vector w, the algorithm balances the updates so that points from different classes are separated. w aligns with the direction that best discriminates between the two classes.
 
-
 ## Cost Function for Logistic Regression
 
-The sum of all the loss over entire training set is called the cost. The cost function is therefore computed by summing over all training examples:  
+The sum of all the loss over entire training set is called the cost. The cost function is therefore computed by summing over all training examples:
 
 $$J(\mathbf{w},b) = \frac{1}{m} \sum_{i=1}^m L(a^{(i)}, y^{(i)})$$
 
 $$J = -\frac{1}{m}\sum_{i=1}^{m}(y^{(i)}\log(a^{(i)})+(1-y^{(i)})\log(1-a^{(i)}))$$
-
 
 ```js
 def compute_cost(A, y_train):
   return np.squeeze(-np.sum((y_train*np.log(A)+(1-y_train)*np.log(1-A)),axis=1))
 ```
 
-The cost is to be minimized and the optimum parameters are to be evaluated. We can use gradient descent. The update rule is as below:  
+The cost is to be minimized and the optimum parameters are to be evaluated. We can use gradient descent. The update rule is as below:
 
-$ \mathbf{w} = \mathbf{w} - \alpha \frac {\partial J}{\partial \mathbf{w}}$  
+$ \mathbf{w} = \mathbf{w} - \alpha \frac {\partial J}{\partial \mathbf{w}}$
 
-$ b = b - \alpha \frac {\partial J}{\partial b}$  
+$ b = b - \alpha \frac {\partial J}{\partial b}$
 
 Where,  
-    $ \alpha$ : Learning Rate (0.0001, 0.001, 0.01...)
+ $ \alpha$ : Learning Rate (0.0001, 0.001, 0.01...)
 
 The goal is to learn $w$ and $b$ by minimizing the cost function $J$
 
@@ -327,30 +351,34 @@ The goal is to learn $w$ and $b$ by minimizing the cost function $J$
 
 To understand the basics of the gradient descent, let us consider one training example and multiple features. Then we can write the forward propogation equations by dropping the superscript $i$:
 
-$z = w_1x_1+w_2x_2+.....+w_{nx}x_{nx}+b $  
+$z = w*1x_1+w_2x_2+.....+w*{nx}x_{nx}+b $
 
-$a = \frac {1}{1+e^{-z}}$  
+$a = \frac {1}{1+e^{-z}}$
 
-$L(a, y) =  - y \log(a) - (1-y) \log(1-a)$  
+$L(a, y) =  - y \log(a) - (1-y) \log(1-a)$
 
 To find the upated values of the parameters, we have to find the gradients $ \frac{\partial L(a, y)}{\partial w_j}$, $ \frac{\partial L(a, y)}{\partial b}$.
 
-The loss function is a function of $a$ and $y$, so we have to use chain rule going backward from the last step to first step.   
+The loss function is a function of $a$ and $y$, so we have to use chain rule going backward from the last step to first step.
 
 Note that $a$ is a function of $z$ and $z$ is a function of $w$.
 
 $\frac{\partial L(a, y)}{\partial w_j}= \frac{\partial L(a, y)}{\partial a} \frac{\partial a}{\partial z}  \frac{\partial z}{\partial w_j}$
 
-Let us try to evaluate the each term separately.  
+Let us try to evaluate the each term separately.
 
 $\frac{\partial L(a, y)}{\partial a}=-\frac {y}{a}+\frac {(1-y)}{(1-a)}$
 
-Using 
+Using
 $\frac{\partial (\frac{u(x)}{v(x)})}{\partial y}=\frac {vu'-uv'}{v^2}$, we evaluate
 
 $ \frac{\partial a}{\partial z}=\frac{\partial }{\partial z} (\frac {1}{1+e^{-z}}) = \frac {e^{-z}}{(1+e^{-z})^2}=\frac {1}{1+e^{-z}}\frac {1+e^{-z}-1}{1+e^{-z}} =a(\frac {1+e^{-z}}{1+e^{-z}} - \frac {1}{1+e^{-z}})$
 
 $ \frac{\partial a}{\partial z}=a(1-a)$
+
+<div style="background-color:#20212b ; width: 100%; text-align: center;">
+  <img src="images/backward_activation.png" alt="Linear Part" width="500">
+</div>
 
 $ \frac{\partial z}{\partial w_j}=x_j$
 
@@ -362,10 +390,14 @@ $\frac{\partial L(a, y)}{\partial b}= (a-y)$
 
 Let us expand the expressions for $m$ training examples by taking the mean of the sum over all the training examples
 
-$$ \frac{\partial J}{\partial w_j} = \frac{1}{m} \sum \limits _{i=1} ^m (a^{(i)}-y^{(i)}){x}^{(i)}_j$$  
+$$ \frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1} ^m (a^{(i)}-y^{(i)}){x}^{(i)}_j$$
 
-$$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum \limits _{i=1} ^m (a^{(i)}-y^{(i)})$$
+$$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum _{i=1} ^m (a^{(i)}-y^{(i)})$$
 
+
+<div style="background-color:#20212b ; width: 100%; text-align: center;">
+  <img src="images/backward_linear.png" alt="Linear Part" width="600">
+</div>
 **Substituting**
 
 $ \frac{\partial J}{\partial w_1} = \frac{1}{m} [({a}^{(1)}-y^{(1)}){x}^{(1)}_1 + ({a}^{(2)}-y^{(2)}){x}^{(2)}_1 + .... + ({a}^{(m)}-y^{(m)}){x}^{(m)}_1]$
@@ -387,13 +419,14 @@ $ \frac{\partial J}{\partial b} = \frac{1}{m} [({a}^{(1)}-y^{(1)}) + ({a}^{(2)}-
 db=(1/m_train)*np.sum((A-y_train), axis=1)
 print(f'Derivative wrt b = {db}')
 ```
-$ \frac{\partial J}{\partial w_1} = \frac{1}{m} \begin{pmatrix} {x}^{(1)}_1 & {x}^{(2)}_1 & \cdots &{x}^{(m)}_1 &  \end{pmatrix}\begin{pmatrix} {a}^{(1)}-y^{(1)}\\ {a}^{(2)}-y^{(2)}\\ \vdots \\ {a}^{(m)}-y^{(m)} \end{pmatrix}$
 
-$ \frac{\partial J}{\partial w_2} = \frac{1}{m} \begin{pmatrix} {x}^{(1)}_2 & {x}^{(2)}_2 & \cdots &{x}^{(m)}_2 &  \end{pmatrix}\begin{pmatrix} {a}^{(1)}-y^{(1)}\\ {a}^{(2)}-y^{(2)}\\ \vdots \\ {a}^{(m)}-y^{(m)} \end{pmatrix}$
+$ \frac{\partial J}{\partial w_1} = \frac{1}{m} \begin{pmatrix} {x}^{(1)}_1 & {x}^{(2)}_1 & \cdots &{x}^{(m)}_1 & \end{pmatrix}\begin{pmatrix} {a}^{(1)}-y^{(1)}\\ {a}^{(2)}-y^{(2)}\\ \vdots \\ {a}^{(m)}-y^{(m)} \end{pmatrix}$
 
-$ \frac{\partial J}{\partial w_1} = \frac{1}{m} \mathbf{x}_{(1)}(\mathbf{\hat {y}-y})^T$
+$ \frac{\partial J}{\partial w_2} = \frac{1}{m} \begin{pmatrix} {x}^{(1)}_2 & {x}^{(2)}_2 & \cdots &{x}^{(m)}_2 & \end{pmatrix}\begin{pmatrix} {a}^{(1)}-y^{(1)}\\ {a}^{(2)}-y^{(2)}\\ \vdots \\ {a}^{(m)}-y^{(m)} \end{pmatrix}$
 
-$ \frac{\partial J}{\partial w_2} = \frac{1}{m} \mathbf{x}_{(2)}(\mathbf{\hat {y}-y})^T$
+$ \frac{\partial J}{\partial w*1} = \frac{1}{m} \mathbf{x}*{(1)}(\mathbf{\hat {y}-y})^T$
+
+$ \frac{\partial J}{\partial w*2} = \frac{1}{m} \mathbf{x}*{(2)}(\mathbf{\hat {y}-y})^T$
 
 $ \frac {\partial J}{\partial \mathbf{w}} = \begin{pmatrix} \frac{\partial J}{\partial w_1} \\ \frac{\partial J}{\partial w_2} \end{pmatrix}$
 
@@ -404,18 +437,20 @@ $$ \frac{\partial J}{\partial \mathbf{w}} = \frac{1}{m}\mathbf {X(a-y)}^T$$
 
 $$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)})$$
 
+![Logistic Regression Model](images/backward.png)
+
 ```js
 def compute_gradient(x, A, y):
   dw = np.dot(x,(A-y).T)
   db = np.sum((A-y), dtype=np.float64, axis=1)
   return dw, db
 ```
-```js
-print(X_train.shape, A.shape)
-dw, db = compute_gradient(X_train, A, y_train)
-print(dw/m_train)
-```
 
+```js
+print(X_train.shape, A.shape);
+dw, (db = compute_gradient(X_train, A, y_train));
+print(dw / m_train);
+```
 
 ## Python implementation
 
@@ -477,6 +512,7 @@ A_pred = forward_activation(forward_linear(X_train, w, b))
 y_pred = np.array([1 if pred > 0.5 else 0 for pred in A_pred[0]]).reshape(1, m_train)
 print((np.sum(y_pred == y_train))/m_train)
 ```
+
 ```js
 A=1/(1+np.exp(-np.dot(w.T, X_test)))
 Y_prediction_test=np.zeros((1,X_test.shape[1]))
