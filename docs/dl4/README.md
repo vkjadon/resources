@@ -23,7 +23,7 @@ $nx$ : Number of features
 We will use $\mathbf{𝐱}^{(𝐢)}$ to denote the feature vector and $\mathbf{𝐲}^{(𝐢)}$ to denote output variable.
 Let us write $z$ for the output as linear combinations of weights and input features.
 
-$z^{(i)} = w*1x^{(i)}_1+w_2x^{(i)}_2+.....+w*{nx}x^{(i)}_{nx}+b $
+$z^{(i)} = w_1x^{(i)}_1+w_2x^{(i)}_2+.....+w_{nx}x^{(i)}_{nx}+b $
 
 Feature vector for $i^{th}$ training example:
 
@@ -52,14 +52,13 @@ Before going further deeper into the logistic regression problem, let us first t
 - Will use `make_classification` from `sklearn` classification dataset to generate random data.
 
 ```js
-import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import make_classification
 ```
 
 ['make_classification' Documentation](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_classification.html)
 
-_Important Parameters:_
+Important Parameters:
 
 - n_samples: (int) The number of samples (default=100)
 - n_features: (int) The total number of features ( default=20)
@@ -68,15 +67,13 @@ _Important Parameters:_
 - return_X_y: (bool) If True, a tuple (X, y) instead of a Bunch object is returned (default=True)
 
 ```js
-X,
-  (y = make_classification(
-    (n_samples = 50),
-    (n_features = 1),
-    (n_informative = 1),
-    (n_redundant = 0),
-    (n_classes = 2),
-    (n_clusters_per_class = 1)
-  ));
+X_dataset, y_dataset = make_classification(
+    n_samples=50,
+    n_features=1,
+    n_informative=1,
+    n_redundant=0,
+    n_classes=2,
+    n_clusters_per_class=1)
 ```
 
 It is must to assign the values of `n_informative` and `n_redundant` to satisfy the condition:
@@ -85,7 +82,7 @@ It is must to assign the values of `n_informative` and `n_redundant` to satisfy 
 
 Another important condition that must be satisfied is:
 
-> n_classes \* n_clusters_per_class $\le$ 2\*\*n_informative
+> n_classes * n_clusters_per_class $\le$ 2**n_informative
 
 ```js
 def plot_scatter(X, y, dim):
@@ -99,7 +96,7 @@ def plot_scatter(X, y, dim):
 ```
 
 ```js
-plot_scatter(X, y, 1);
+plot_scatter(X_dataset, y_dataset, 1)
 ```
 
 ![Dataset](images/dataset1D.png)
@@ -107,17 +104,16 @@ plot_scatter(X, y, 1);
 **Note** : your data may be different as the samples are randomly generated.
 
 ```js
-X,
-  (y = make_classification(
-    (n_samples = 500),
-    (n_features = 2),
-    (n_informative = 2),
-    (n_redundant = 0),
-    (n_classes = 3),
-    (n_clusters_per_class = 1),
-    (random_state = 42)
-  ));
-plot_scatter(X, y, 2);
+X_dataset, y_dataset = make_classification(
+    n_samples=500,
+    n_features=2,
+    n_informative=2,
+    n_redundant=0,
+    n_classes=3,
+    n_clusters_per_class=1,
+    random_state=42)
+
+plot_scatter(X_dataset, y_dataset, 2)
 ```
 
 In the figure below, the classes are three in different colors (Yellow, Green and Brown). In this case the plot should exactly match as we have used seed based random generator as specified by `random_state`. The seed is `42`.
@@ -125,18 +121,16 @@ In the figure below, the classes are three in different colors (Yellow, Green an
 ![Dataset](images/dataset2DC3.png)
 
 ```js
-X,
-  (y = make_classification(
-    (n_samples = 500),
-    (n_features = 2),
-    (n_informative = 2),
-    (n_redundant = 0),
-    (n_classes = 2),
-    (n_clusters_per_class = 2),
-    (random_state = 42)
-  ));
+X_dataset, y_dataset = make_classification(
+    n_samples=500,
+    n_features=2,
+    n_informative=2,
+    n_redundant=0,
+    n_classes=2,
+    n_clusters_per_class=2,
+    random_state=42)
 
-plot_scatter(X, y, 2);
+plot_scatter(X_dataset, y_dataset, 2)
 ```
 
 In the figure below, there are 2 classes in two different colors (Red and Blue) and each classes are having two sub-classes. The plot should exactly match in this case also.
@@ -144,18 +138,20 @@ In the figure below, there are 2 classes in two different colors (Red and Blue) 
 ![Dataset](images/dataset2DC2SC2.png)
 
 ```js
-X_orig,
-  (y_orig = make_classification(
-    (n_samples = 50),
-    (n_features = 1),
-    (n_informative = 1),
-    (n_redundant = 0),
-    (n_classes = 2),
-    (n_clusters_per_class = 1),
-    (random_state = 4)
-  ));
+X_dataset, y_dataset = make_classification(
+    n_samples=500,
+    n_features=2,
+    n_informative=2,
+    n_redundant=0,
+    n_classes=2,
+    n_clusters_per_class=1,
+    random_state=4)
 
-plot_scatter(X, y, 2);
+plot_scatter(X_dataset, y_dataset, 2)
+```
+```
+print(X_dataset.shape)
+print(y_dataset.shape)
 ```
 
 ## Setting Input Data as per Notation
@@ -166,25 +162,22 @@ The shape of the feature matrix is ($m, nx$). For our use, the X matrix needs to
 
 You can use `train_test_split` method from `sklearn` for this.
 
+```
+from sklearn.model_selection import train_test_split
+```
+
 ```js
-training_x,
-  testing_x,
-  training_y,
-  (testing_y = train_test_split(
-    X_orig,
-    y_orig,
-    (train_size = 0.8),
-    (test_size = 0.2),
-    (random_state = 1)
-  ));
-m_train = training_x.shape[0];
-m_test = testing_x.shape[0];
+training_x, testing_x, training_y, testing_y = train_test_split(X_dataset, y_dataset, train_size=0.8, test_size=0.2, random_state=1)
 
-X_train = training_x.T;
-X_test = testing_x.T;
+m_train=training_x.shape[0]
+m_test=testing_x.shape[0]
+nx = training_x.shape[1]
 
-y_train = training_y.reshape(1, m_train);
-y_test = testing_y.reshape(1, m_test);
+X_train = training_x.T
+X_test = testing_x.T
+
+y_train = training_y.reshape(1, m_train)
+y_test = testing_y.reshape(1, m_test)
 ```
 
 ## Forward Propogation - Linear Output
@@ -197,14 +190,11 @@ Next, is to compute the linear output using $z^{(i)} = \mathbf{w}^T \mathbf{x}^{
 
 ```js
 import numpy as np
-def initialize_with_zeros(features):
-    w = np.zeros(features).reshape(features,1)
-    b = 0.0
-    return w, b
+def initialize_with_zeros(nx):
+  return np.zeros(nx).reshape(nx,1), 0.0
 
 def forward_linear(x, w, b):
-  z = np.dot(w.T, x) + b
-  return z
+  return np.dot(w.T, x) + b
 ```
 
 ## Forward Propogation - Activated Output
@@ -249,7 +239,7 @@ Let consider a case of one feature ($nx=1$) and $x=1$, $b=0$ and $y=1$; also, ig
 ```js
 # w axis
 w = np.linspace(-7, 7, 400)
-a = activation(w)
+a = forward_activation(w)
 
 # Loss functions
 loss_mse_y1 = 0.5 * (a - 1) ** 2
@@ -284,7 +274,7 @@ The above cost function is covex and hence we can have a global minima.
 ```js
 # w axis
 w = np.linspace(-4, 4, 400)
-a = activation(w)
+a = forward_activation(w)
 
 # Loss functions
 loss_mse_y1 = 0.5 * (a - 1) ** 2
@@ -410,7 +400,6 @@ yhat = forward_activation(A)
 dw1=(np.sum(np.multiply(X_train[0], (A-y_train)), axis=1))*(1/m_train)
 dw2=(np.sum(np.multiply(X_train[1], (A-y_train)), axis=1))*(1/m_train)
 dw = np.array([dw1, dw2]).reshape(2,1)
-print(f'Derivative wrt w = {dw}')
 ```
 
 $ \frac{\partial J}{\partial b} = \frac{1}{m} [({a}^{(1)}-y^{(1)}) + ({a}^{(2)}-y^{(2)}) + .... + ({a}^{(m)}-y^{(m)})]$
@@ -441,15 +430,17 @@ $$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)})$$
 
 ```js
 def compute_gradient(x, A, y):
+
   dw = np.dot(x,(A-y).T)
   db = np.sum((A-y), dtype=np.float64, axis=1)
+
   return dw, db
 ```
 
 ```js
-print(X_train.shape, A.shape);
-dw, (db = compute_gradient(X_train, A, y_train));
-print(dw / m_train);
+print(X_train.shape, A.shape)
+dw, db = compute_gradient(X_train, A, y_train)
+print(dw/m_train)
 ```
 
 ## Python implementation
@@ -475,14 +466,12 @@ for i in range(max_iteration):
 
   dw, db = compute_gradient(X_train, A, y_train)
 
-
   #print("Gradients dw, b", dw,db)
 
   w=w-learning_rate*dw/m_train
   b=b-learning_rate*db/m_train
 
-# print(" Cost", cost)
-print(w.shape, b.shape)
+print(w, b)
 ```
 
 ```js
