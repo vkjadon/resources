@@ -1,276 +1,510 @@
-## Cat Classifier using Shallow Neural Network
+## Binary Classification using Logistic Rgression - Dataset
 
-The network below is called as 2-layer Neural Network (NN). The input layer is not counted by convention to nomenclate the network. The layers between output and input layers are called as hidden layer. In the NN shown below is having one hidden layer and the output layer.
+- Open a New Notebook on Google Colab or you can clone a 
 
-![Neural Network](images/nn2l.png)
+```
+git clone https://github.com/vkjadon/deep_learning/
+```
 
-We have developed the basic understanding of the processing happening in the neuron or hidden unit. Each unit is supposed to perform two tasks. First, it represnt the input featues and the weights as linear combination and this computation is called as the linear part of hidden unit computaion. The other part of the computation is the activation using non-linear activation function. This can be represneted in general by the following:  
+Use dl_01_lr_single_neuron.ipynb
 
-![Neural Network](images/neuron_process.png)
+Clone the following github repository and follow along. 
 
-## Input Dataset as per Matrix Notation
+```py
+# Cleaning up variables to prevent loading data multiple times (which may cause memory issue)
+try:
+  for var in dir():
+    if not var.startswith("_"):
+      del var
+      print(f'Clearing {var}.')
+except:
+  pass
+! git clone https://github.com/vkjadon/utils/
+```
+Run the cell to import necessary modules
 
-Input Feature vector for $i^{th}$ training example:
+```js
+import numpy as np
+import h5py
+import matplotlib.pyplot as plt
+from utils.public_tests import *
+```
+### Fetch Dataset from Kaggle
+- Import data from Kaggle
+- Use <a href="https://www.kaggle.com/muhammeddalkran/catvnoncat" target="_blank"> this Link </a>  
 
-$\mathbf{x}^{(i)} = \mathbf{a}^{[0](i)} = \begin{pmatrix} {x}_1^{(i)} \\ {x}_2^{(i)} \\ \vdots \\ {x}_{nx}^{(i)} \end{pmatrix}= \begin{pmatrix} {a}_1^{[0](i)} \\ {a}_2^{[0](i)} \\ \vdots \\ {a}_{nx}^{[0](i)} \end{pmatrix} $   
+From the download button, copy the following code and execute to download the data.
 
-Input Feature vector of the problem dataset:   
+```js
+import kagglehub
 
-$ \mathbf{X} = \mathbf{A}^{[0]}= \begin{pmatrix} \mathbf{x}^{(1)} & \mathbf{x}^{(2)} & \cdots & \mathbf{x}^{(i)}
-\end{pmatrix}$   
+# Download latest version
+path = kagglehub.dataset_download("muhammeddalkran/catvnoncat")
 
-$ \mathbf{X} = \mathbf{A}^{[0]} = \begin{pmatrix} {x}_1^{(1)} & {x}_1^{(2)} & \cdots & {x}_1^{(m)} \\ {x}_2^{(1)} & {x}_2^{(2)} & \cdots & {x}_2^{(m)} \\ \vdots & \vdots & \cdots & \vdots \\ {x}_{nx}^{(1)} & {x}_{nx}^{(1)} & \cdots & {x}_{nx}^{(m)} \end{pmatrix}, \mathbf{X} \in \mathbf R ^{nx \times m}$  
+print("Path to dataset files:", path)
+```
+Check the list of the path
 
-**Let the input features be 3 to develop the intuition about the forward and backward propogation.**
+```bash
+!ls /kaggle/input/catvnoncat
+```
+> catvnocat
+It shows one folder with name `catvnocat`
 
-## Forward Propagation: $i^{th}$ Training Example
+```bash
+!ls /kaggle/input/catvnoncat/catnocat
+```
+> test_catvnoncat.h5  train_catvnoncat.h5
 
-### Hidden Layer-1 Parameters :  
+These are `h5` files. Check documentation for more details. [Documentationt](https://docs.h5py.org/en/stable/)
 
-Considering input features as activation of zeroth layer.
 
-**Node-1 of Layer-1**  
+ `h5py.File` acts like a Python dictionary, thus we can check the keys using `key()` method with list or `for loop`. [h5py Documentation Link](https://docs.h5py.org/en/stable/quick.html)
+ 
+ ```js
+print(f'List containing keys only {list(train_dataset.keys())}')
+```
 
-![Neural Network](images/neuron_process.png)
+Key values are the `Groups` like a folder in file system.The groups contain dataset as files in the folders. 
 
-$ z^{[1](i)}_1 = w_{11}^{[1]}x^{(i)}_1+w_{12}^{[1]}x^{(i)}_2+w_{13}^{[1]}x^{(i)}_3 + b^{[1]}_1 $   
+```js
+for key in train_dataset.keys():
+    print(train_dataset[key], type(train_dataset[key]))
+```
 
-We can write the above equation in matrix form as   
+ ## Load Dataset
 
-$z^{[1](i)}_1\ = \begin{pmatrix} w_{11}^{[1]} & w_{12}^{[1]} & w_{13}^{[1]} \end{pmatrix} \begin{pmatrix} x^{(i)}_1 \\ x^{(i)}_2 \\ x^{(i)}_3 \end{pmatrix} + b^{[1]}_1$ 
+```js
+train_dataset = h5py.File( path + '/catvnoncat/train_catvnoncat.h5', "r")
+```
 
-We know that weights are defined as column vectors where weights for input are stacked vertically for all input features.   
+The, <class 'h5py._hl.dataset.Dataset'> is not the data itself, but a handle (object) pointing to the dataset inside the HDF5 file. 
 
-$ \mathbf{w}^{[1]}_1 = \begin{pmatrix} w_{11}^{[1]} \\ w_{12}^{[1]} \\ w_{13}^{[1]} \end{pmatrix} $   
+```js
+print(type(train_dataset["train_set_y"]))
+list(train_dataset["train_set_y"])
+```
 
-The above matrix form can be written in vecorized for as under:   
+The list looks like a Numpy array, but it is not. To actually use the values, you typically convert it into a NumPy array.
 
-$ z^{[1](i)}_1 = \mathbf{w}_1^{[1]T}\mathbf{x}^{(i)} + b^{[1]}_1 $  
+```js
+a=np.array(train_dataset["list_classes"])
+print(a, a.dtype)
+```
 
-This can be implemented using numpy dot() as under using common variables:   
+In NumPy, the `|S7` data type represents a fixed-length string of 7 characters. The S stands for string, and the number 7 indicates the length of the string. This data type is useful when you want to store and manipulate fixed-length strings in a NumPy array. Each element of the array will be a string of exactly 7 characters.
 
-$\mathbf{z}^{[1](i)}_1 = np.dot(\mathbf{w}^{[1]}_1.T, \mathbf{x}^{(i)}) + b^{[1]}_1$   
+If you want to store a string of 4 characters in a NumPy array with the |S7 data type, you can do so by using a fixed-length string of length 7, where the remaining 3 characters are filled with spaces.
 
-$ z^{[1](i)}_1 = \mathbf{w}_1^{[1]T}\mathbf{a}^{[0](i)} + b^{[1]}_1 $  
+## Exploring Data
 
-$ a_1^{[1](i)}=g (z^{[1](i)}_1) $
+```js
+train_set_x_orig = np.array(train_dataset["train_set_x"]) # your train set features
+train_set_y_orig = np.array(train_dataset["train_set_y"]) # your train set labels
+```
 
-**Node-2 of Layer-1**  
+You can use standard functions to explore data. You may find the shape of the feature matrix (`train_set_x_orig`) is **(209, 64, 64, 3)** and the shape of output label matrix (`train_set_y_orig`) is **(209,)**.
 
-$ z^{[1](i)}_2 = w_{21}^{[1]}x^{(i)}_1+w_{22}^{[1]}x^{(i)}_2+w_{23}^{[1]}x^{(i)}_3 + b^{[1]}_2 $   
+## Show cat image - MatPlotLib
 
-We can write the above equation in matrix form as   
+```js
+index = 2
+plt.imshow(train_set_x_orig[index])
+```
+![Cat Image](images/image_index2.png)
 
-$z^{[1](i)}_2\ =\begin{pmatrix} w_{21}^{[1]} & w_{22}^{[1]} & w_{23}^{[1]} \end{pmatrix} \begin{pmatrix} x^{(i)}_1 \\ x^{(i)}_2 \\ x^{(i)}_3 \end{pmatrix} + b^{[1]}_2$  
+Change the index to show other images. You can also show the images in a grid
 
-$ \mathbf{w}^{[1]}_2 = \begin{pmatrix} w_{21}^{[1]} \\ w_{22}^{[1]} \\ w_{23}^{[1]} \end{pmatrix} $  
+```js
+for i in range(16):
+  plt.subplot(4, 4, i+1)
+  plt.imshow(test_set_x_orig[i])
+  plt.axis('off')
+```
+This will show 16 images in 4 x 4 grid. In the `subplot` function:
 
-The above matrix form can be written in vecorized for as under:   
+- First index is for rows
+- Second is for columns
+- Last index is for image number
 
-$ z^{[1](i)}_2 = \mathbf{w}_2^{[1]T}\mathbf{x}^{(i)} + b^{[1]}_2 $   
+![Cat Image](images/image_grid16.png)
 
-This can be implemented using numpy dot() as under using usual variables:   
 
-$\mathbf{z}^{[1](i)}_2 = np.dot(\mathbf{w}^{[1]}_2.T, \mathbf{x}^{(i)}) + b^{[1]}_2$   
+## Setting Data as per Matrix Notation
+Our formulation takes all features in a single column and the training examples in different columns. This makes a matrix of size number of features and number of training examples. 
 
-$ z^{[1](i)}_2 = \mathbf{w}_2^{[1]T}\mathbf{a}^{[0](i)} + b^{[1]}_2 $   
+So, the shape of $X$ matrix is $(nx, m)$, where,   
 
-$a_2^{[1](i)}=\sigma (z^{[1](i)}_2)$
+$nx = px \times py \times 3 $ for the images as input and $m$ is the training examples.
 
-**Node-3 of Layer-1**  
+```js
+num_px = train_set_x_orig.shape[1]
+num_py = train_set_x_orig.shape[2]
+nx = num_px * num_py * 3
+m_train = train_set_x_orig.shape[0]
 
-$ z^{[1](i)}_3 = w_{31}^{[1]}x^{(i)}_1+w_{32}^{[1]}x^{(i)}_2+w_{33}^{[1]}x^{(i)}_3 + b^{[1]}_3 $   
+print (f"Number of Features  = {nx}")
+print (f"Number of training examples = {m_train}")
+print (f"Size of image in pixels: {num_px} x {num_py}")
+# You should get nx = 12288 and m_train = 209
+```
 
-In matrix form,    
-$z^{[1](i)}_3\ =\begin{pmatrix} w_{31}^{[1]} & w_{32}^{[1]} & w_{33}^{[1]} \end{pmatrix} \begin{pmatrix} x^{(i)}_1 \\ x^{(i)}_2 \\ x^{(i)}_3 \end{pmatrix} + b^{[1]}_3$  
+You should reshape `train_set_x_orig` to `(nx,m_train)` and `train_set_y_orig` to `(1, m_train)` if they are not as per our convention.
 
-$ \mathbf{w}^{[1]}_3 = \begin{pmatrix} w_{31}^{[1]} \\ w_{32}^{[1]} \\ w_{33}^{[1]} \end{pmatrix} $.  
+```js
+train_set_x=train_set_x_orig.reshape(-1, m_train)
+train_set_y = train_set_y_orig.reshape((1, m_train))
+```
 
-The above matrix form can be written in vecorized for as under:   
+To represent color images, the red, green and blue channels (RGB) must be specified for each pixel, and so the pixel value is actually a vector of three numbers ranging from 0 to 255.
 
-$ z^{[1](i)}_3 = \mathbf{w}_3^{[1]T}\mathbf{x}^{(i)} + b^{[1]}_3 $  
+Optimizing the parameters is best suited on the data of the same range. Let's normalize our dataset with the maximum possible pixel value i.e. 255.
 
-This can be implemented using numpy dot() as under using common variables:   
+```js
+X_train = train_set_x / 255.
+y_train=train_set_y
+```
 
-$\mathbf{z}^{[1](i)}_3 = np.dot(\mathbf{w}^{[1]}_3.T, \mathbf{x}^{(i)}) + b^{[1]}_3$   
+Check the input data using the following test.
 
-$ z^{[1](i)}_3 = \mathbf{w}_3^{[1]T}\mathbf{a}^{[0](i)} + b^{[1]}_3 $  
+```js
+input_data_test(X_train, y_train, m_train, nx)
+```
 
-$a_3^{[1](i)}=\sigma (z^{[1](i)}_3) $
+## Forward Propogation
 
-**Node-4 of Layer-1**    
+Before going into the details of forward prpogation, we have to first initialize the weights and biases. 
 
-$ z^{[1](i)}_4 = w_{41}^{[1]}x^{(i)}_1+w_{42}^{[1]}x^{(i)}_2+w_{43}^{[1]}x^{(i)}_3 + b^{[1]}_4 $   
+```py
+def initialize_with_zeros(features):
+    """
+    This function creates a vector of zeros of shape (features, 1) for w and initializes b to 0.
 
-In matrix form,   
+    Argument:
+    features -- size of the w vector we want (or number of parameters in this case)
 
-$z^{[1](i)}_4\ =\begin{pmatrix} w_{41}^{[1]} & w_{42}^{[1]} & w_{43}^{[1]} \end{pmatrix} \begin{pmatrix} x^{(i)}_1 \\ x^{(i)}_2 \\ x^{(i)}_3 \end{pmatrix} + b^{[1]}_4$  
+    Returns:
+    w -- initialized vector of shape (features, 1)
+    b -- initialized scalar (corresponds to the bias) of type float
+    """
 
-$ \mathbf{w}^{[1]}_4 = \begin{pmatrix} w_{41}^{[1]} \\ w_{42}^{[1]} \\ w_{43}^{[1]}\end{pmatrix} $   
+    w = np.zeros(features).reshape(features,1)
+    b = 0.0
 
-The above matrix form can be written in vecorized for as under:   
+    return w, b
+```
 
-$ z^{[1](i)}_4 = \mathbf{w}_4^{[1]T}\mathbf{x}^{(i)} + b^{[1]}_4 $  
+Check with the following test
 
-This can be implemented using numpy dot() as under using common variables:   
+```py
+initialize_with_zeros_test(initialize_with_zeros)
+```
 
-$\mathbf{z}^{[1](i)}_4 = np.dot(\mathbf{w}^{[1]}_4.T, \mathbf{x}^{(i)}) + b^{[1]}_4$   
+Compute the initial weights and biases. These will be used for testing other functions where the output of this function will be the input to other subsequent functions.
 
-$ z^{[1](i)}_4 = \mathbf{w}_4^{[1]T}\mathbf{a}^{[0](i)} + b^{[1]}_4 $  
+```js
+w, b = initialize_with_zeros(nx)
+```
+Now, we can implement the linear computation using the following vectorized equation.
 
-$a_4^{[1](i)}=\sigma (z^{[1](i)}_4) $
+$\mathbf{z} = \mathbf{w}^T \mathbf{X} + b$  
 
-## Linear Computation for Entire Layer
+<div style="background-color:#20212b ; width: 100%; text-align: center;">
+  <img src="images/forward_linear.png" alt="Linear Part" width="300">
+</div>
 
-Writting the linear part of the hidden layer to develop the vectorized form.  
-$ z^{[1](i)}_1 = w_{11}^{[1]}x^{(i)}_1+w_{12}^{[1]}x^{(i)}_2+w_{13}^{[1]}x^{(i)}_3 + b^{[1]}_1 $   
+```py
+def forward_linear(X, w, b):
+  """
+    Compute the linear output z
 
-$ z^{[1](i)}_2 = w_{21}^{[1]}x^{(i)}_1+w_{22}^{[1]}x^{(i)}_2+w_{23}^{[1]}x^{(i)}_3 + b^{[1]}_2 $   
+    Arguments:
+    x -- A 2D numpy array of size (nx, m)
+    w -- A 2D numpy array of size (nx, 1)
+    b -- A scalar
 
-$ z^{[1](i)}_3 = w_{31}^{[1]}x^{(i)}_1+w_{32}^{[1]}x^{(i)}_2+w_{33}^{[1]}x^{(i)}_3 + b^{[1]}_3 $   
+    Return:
+    z -- wx + b of size (1, m)
+  """
+  z = np.dot(w.T, X) + b
 
-$ z^{[1](i)}_4 = w_{41}^{[1]}x^{(i)}_1+w_{42}^{[1]}x^{(i)}_2+w_{43}^{[1]}x^{(i)}_3 + b^{[1]}_4 $  
+  return z
+```
 
+Check with the following test:
 
-We can write the above equations in matrix form as below
+```js
+forward_linear_test(forward_linear)
+```
+Compute the linear output using the `forward_linear` function.
 
-$\begin{pmatrix} {z}_1^{[1](i)} \\ {z}_2^{[1](i)} \\ z_3^{[1](i)} \\ {z}_{4}^{[1](i)} \end{pmatrix}= \begin{pmatrix} w_{11}^{[1]} & w_{12}^{[1]} & w_{13}^{[1]} \\ w_{21}^{[1]} & w_{22}^{[1]} & w_{23}^{[1]} \\ w_{31}^{[1]} & w_{32}^{[1]} & w_{33}^{[1]} \\ w_{41}^{[1]} & w_{42}^{[1]} & w_{43}^{[1]} \end{pmatrix}\begin{pmatrix} {x}_1^{(i)} \\ {x}_2^{(i)} \\ {x}_{3}^{(i)} \end{pmatrix} + \begin{pmatrix} {b}_1^{[1]} \\ {b}_2^{[1]} \\ b_3^{[1]} \\ {b}_{4}^{[1]} \end{pmatrix}$
+These will be used for testing other functions where the output of this function will be the input to other subsequent functions.
 
-Let us define the vectors
+```js
+z = forward_linear(X_train, w, b)
+```
 
-$\mathbf{z}^{[1](i)} = \begin{pmatrix} {z}_1^{[1](i)} \\ {z}_2^{[1] (i)} \\ z_3^{[1](i)} \\ {z}_{4}^{[1] (i)} \end{pmatrix}; \mathbf{W}^{[1]} = \begin{pmatrix} w_{11}^{[1]} & w_{12}^{[1]} & w_{13}^{[1]} \\ w_{21}^{[1]} & w_{22}^{[1]} & w_{23}^{[1]} \\ w_{31}^{[1]} & w_{32}^{[1]} & w_{33}^{[1]} \\ w_{41}^{[1]} & w_{42}^{[1]} & w_{43}^{[1]} \end{pmatrix}; \mathbf{x}^{(i)} = \begin{pmatrix} {x}_1^{(i)} \\ {x}_2^{(i)} \\ {x}_{3}^{(i)} \end{pmatrix}; \mathbf{b}^{[1]} = \begin{pmatrix} {b}_1^{[1]} \\ {b}_2^{[1]} \\ b_3^{[1]} \\ {b}_{4}^{[1]} \end{pmatrix}$  
 
-$\mathbf W^{[1]}.\text shape()=(n_h, n_{h-1})$
+Now, you can add the non-linearity using a non linear activation function. Sigmoid is best suited at output layer for a binary classification problem such as `cat` and `no-cat`. 
 
-The vectorized equation can be written as:  
+Following is the vectorized form for activated output:
 
-$\mathbf{z}^{[1] (i)} = \mathbf{W}^{[1]}\mathbf{x}^{(i)} + \mathbf{b}^{[1]}$   
+$$\mathbf {\hat{y}} = \mathbf {a} = \frac {1}{1+e^{-\mathbf {z}}} $$
 
-This can be implemented using numpy dot() as under using common variables:   
+<div style="background-color:#20212b ; width: 100%; text-align: center;">
+  <img src="images/forward.png" alt="Linear Part" width="500">
+</div>
 
-$\mathbf{z}^{[1] (i)} = np.dot(\mathbf{W}^{[1]}, \mathbf{x}^{(i)}) + \mathbf{b}^{[1]}$   
+The following function implement `sigmoid` activation.
 
-The output of the linear part is then activated by a suitable activation function.
+```js
+def forward_activation(z):
+    """
+    Compute the activated output of z (sigmoid in this case)
 
-The above vectorised equation can also be developed by considering the output of the linear part in vector form.   
+    Arguments:
+    z -- A 2D numpy array of any size [(1, m) in this case].
 
-$ z^{[1] (i)}_1 = \mathbf{w}_1^{[1]T}\mathbf{x}^{(i)} + b^{[1]}_1 $.  
+    Return:
+    s -- sigmoid(z) of any size [(1, m) in this case].
+    """
 
-$ z^{[1] (i)}_2 = \mathbf{w}_2^{[1]T}\mathbf{x}^{(i)} + b^{[1]}_2 $  
+    s = 1/(1+np.exp(-z))
 
-$ z^{[1] (i)}_3 = \mathbf{w}_3^{[1]T}\mathbf{x}^{(i)} + b^{[1]}_3 $  
+    return s
+```
+Check with the following test and once all the test cases passed compute activated output:
 
-$ z^{[1] (i)}_4 = \mathbf{w}_4^{[1]T}\mathbf{x}^{(i)} + b^{[1]}_4 $  
+```js
+forward_activation_test(forward_activation)
+```
+Compute the activated output
 
-We can write the above set of equations in matrix form as under:  
+```js
+A = forward_activation(z)
+```
 
-$ \mathbf{z}^{[1] (i)} = \begin{pmatrix} {z}_1^{[1] (i)} \\ {z}_2^{[1] (i)} \\ z_3^{[1] (i)} \\ {z}_{4}^{[1] (i)} \end{pmatrix} = \begin{pmatrix} \mathbf{w}_1^{[1]T} \mathbf x^{(i)} \\ \mathbf{w}_2^{[1]T}\mathbf x^{(i)} \\ \mathbf{w}_3^{[1]T}\mathbf x^{(i)} \\ \mathbf{w}_4^{[1]T}\mathbf x^{(i)} \end{pmatrix} + \begin{pmatrix} b_1 \\ b_2 \\ b_3 \\ b_4 \end{pmatrix} $ 
+These will be used for testing other functions where the output of this function will be the input to other subsequent functions.
 
-The vectorized form is written as below    
+Compute Cost
 
-  $\mathbf{z}^{[1](i)} = \mathbf{W}^{[1]}\mathbf{x}^{(i)} + \mathbf{b}^{[1]}$
+$$J = -\frac{1}{m}\sum_{i=1}^{m}(y^{(i)}\log(a^{(i)})+(1-y^{(i)})\log(1-a^{(i)}))$$
 
-This is the same as that of expression derived earlier.
+Vectorize form
 
-$\mathbf{W}^{[1]} = \begin{pmatrix} \mathbf{w}_1^{[1]T} \\ \mathbf{w}_2^{[1]T} \\ \mathbf{w}_3^{[1]T} \\ \mathbf{w}_{4}^{[1]T}\end{pmatrix} $
+$$J = -\frac{1}{m}\sum(\mathbf y\log(\mathbf a)+(1-\mathbf y)\log(1- \mathbf a))$$
 
-### Activation Function
-We use $sigmoid()$ activation function when we need to calculate probability and the output is converted into 0 and 1 with the use of some threshold value.   
+The sum is be carried out along `axis = 1` to finally get scalar value of cost.
 
-We use $tanh()$ function for the hidden layer as it maps negative values with negative and zero with zero. The output of the $tanh()$ function ranges between $-1$ to $+1$. The shape of $tanh()$ is also s-shaped as the shape of $sigmoid()$ activation is but it is shfted to map 0 with 0.    
-$\mathbf{a}^{[1](i)} = tanh(\mathbf{z}^{[1](i)})$.   
+```js
+def compute_cost(A, y_train):
+  """
+    Compute the cost based on the Binary Cross Entropy Loss
 
-The $tanh(z)$ is given by $tanh(z)=\large \frac{e^{z}-e^{-z}}{e^{z}+e^{-z}}$.  
+    Arguments:
+    A -- A 2D numpy array of any size [(1, m) in this case].
+    y_train -- A 2D numpy array of any size [(1, m) in this case].
 
-$\large \frac{\partial[tanh(z)]}{\partial z}=\small 1-[tanh(z)]^2$.  
+    Return:
+    cost -- scalar of float type.
+    """
 
-The above vectorized form of the equations are to be used for python implementation of the forward propagation of first hidden layer. We can represnt the input feature vector as the activation output of zeroth layer.
+    cost = -np.sum((y_train*np.log(A)+(1-y_train)*np.log(1-A)),axis=1)
+    cost = np.squeeze(cost)
 
-## Second Layer: Output Layer
+  return cost
+```
 
-### Layer-2  Node-1
+Check the function 
 
-$ z^{[2] (i)} = w_{11}^{[2]}a^{[1] (i)}_1+w_{12}^{[2]}a^{[1] (i)}_2+w_{13}^{[2]}a^{[1] (i)}_3 + w_{14}^{[2]}a^{[1] (i)}_4 + b^{[2]}_1 $   
+```js
+compute_cost_test(compute_cost)
+```
+Compute the cost in one iteration. 
 
-$ z^{[2] (i)} = \mathbf{w}^{[2]T}\mathbf{a}^{[1] (i)} + b^{[2]} $  
+```js
+cost = compute_cost(A, y_train)
+```
+This is not as such required for training but is used to monitor the progress of the training. It is used in plotting the learning curve.
 
-$a^{[2] (i)}=\sigma (z^{[2] (i)}) $
+![Logistic Regression Model](images/backward.png)
 
-$\mathbf{z}^{[2] (i)} = \mathbf{w}^{[2]T} \mathbf{a}^{[1] (i)} + \mathbf{b}^{[2]}$.   
+Compute the gradients ($dw, db$) to complete the one step of training. This is the back propogation step.
 
-Note that $\mathbf w^{[2]}.shape=(4,1)$ but $W.shape=(n^{[l]}, n^{[l-1]})$. So, $W^{[2]}.shape=(1,4)$, this gives $W^{[2]}=\mathbf w^{[2]T}$  
+The gradient of output layer loss with respect to the output activation for cross entropy loss is given by
 
-$\mathbf{z}^{[2] (i)} = \mathbf{W}^{[2]} \mathbf{a}^{[1] (i)} + \mathbf{b}^{[2]}$.   
+$L(\mathbf{a}, \mathbf{y}) =  - \mathbf{y}  \log(\mathbf{a}) - (1-\mathbf{y})  \log(1-\mathbf{a})$  
 
-This can be implemented using numpy dot() as under using common variables:   
+The vectorized form of the gradient ($dL/da$) is 
 
-$\mathbf{z}^{[2] (i)} = np.dot(\mathbf{W}^{[2]}, \mathbf{a}^{[1] (i)}) + b^{[2]}$   
+$da= - \frac{\mathbf{y}}{\mathbf{a}} - \frac{1-\mathbf{y}}{1-\mathbf{a}}$
 
-We will use $sigmoid()$ activation function for the output layer as we need the binary classification on the basis of the probability of output being true for give data.  
+```js
+da = - (np.divide(y_train, A) - np.divide(1 - y_train, 1 - A))
+```
 
+<div style="background-color:#20212b ; width: 100%; text-align: center;">
+  <img src="images/backward_activation.png" alt="Linear Part" width="500">
+</div>
 
-$\mathbf{a}^{[2] (i)} = sigmoid(\mathbf{z}^{[2] (i)})$.
+Using
 
-The above vectorized form of the equations are to be used for python implementation of the forward propagation of output layer.
+$$y= \frac{u(x)}{v(x)}; \frac{\partial y} {\partial x}=\frac {vu'-uv'}{v^2}$$ 
 
-## Forward Propagation : One Training Example
+We evaluate
 
-Let us re-write the set of four vectorized equations developed above for hidden layer and output layer by the dropping `(i)` to represent single training example as:  
+$ \frac{\partial a}{\partial z}=\frac{\partial }{\partial z} (\frac {1}{1+e^{-z}}) = \frac {e^{-z}}{(1+e^{-z})^2}=\frac {1}{1+e^{-z}}\frac {1+e^{-z}-1}{1+e^{-z}} =a(\frac {1+e^{-z}}{1+e^{-z}} - \frac {1}{1+e^{-z}})$
 
-**Hidden Layer**  
+The vectorized form
 
-$\mathbf{z}^{[1]} = \mathbf{W}^{[1]} \mathbf{a}^{[0]} + \mathbf{b}^{[1]}$   
+$ \frac{\partial \mathbf a}{\partial \mathbf z}=\mathbf a(1- \mathbf a)$
 
-$\mathbf{a}^{[1]} = tanh(\mathbf{z}^{[1]})$   
+```py
+def backward_activation(z, da):
+  """
+    Compute the (dJ/dz)
 
-**Output Layer**  
+    Arguments:
 
-$\mathbf{z}^{[2]} = \mathbf{W}^{[2]} \mathbf{a}^{[1]} + \mathbf{b}^{[2]}$   
+    z -- A 2D numpy array of any size [(1, m) in this case].
+    da -- (dL/da) Gradient of loss wrt activated output.
 
-$\mathbf{a}^{[2]} = sigmoid(\mathbf{z}^{[2]})$   
+    Return:
+    dz -- scalar of float type.
+  """
 
-These four vectorized equations, two for each layer are to be used for python implementation.
+  s = 1/(1+np.exp(-z))
 
-## Backward Propagation to Compute Gradients: One Training Example
+  ds_da = s * (1 - s)
 
-The forward propagation starts with assumed values of the parameters. The parameters in the example of 2-Layer with 3 input features and 4 nodes in the hidden layer for the binary classification problem are $\mathbf W^{[1]}, \mathbf W^{[2]}, \mathbf b^{[1]}, b^{[2]}$.   
+  dz = da * ds_da
 
-$ \mathbf W^{[1]}.shape=(4, 3)$  
+  return dz
+```
 
-$ \mathbf W^{[2]}.shape=(1, 4)$  
+Compute $ \partial J/\partial z$
 
-$ \mathbf b^{[1]}.shape=(4, 1)$  
+```py
+dz = backward_activation(z, da)
+```
 
-$ \mathbf b^{[2]}.shape=(1, 1)$  
+<div style="background-color:#20212b ; width: 100%; text-align: center;">
+  <img src="images/backward_linear.png" alt="Linear Part" width="500">
+</div>
 
-So, in all we have to optimize the 21 parameters for this network using the training data. For the purpose of explaining the method, we have assumed only one training example.   
 
-### Loss Function  
+In vectorized form,  
 
-We first need to calculate the loss. The loss function is assumed as:   
+$$ \frac{\partial J}{\partial \mathbf{w}} = \frac{1}{m}\mathbf {X(a-y)}^T = \frac{1}{m}\mathbf {X(dz)}^T $$
 
-$L(a, y) =  - y  \log(a^{[2]}) - (1-y)  \log(1-a^{[2]})$   
+$$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)}) = \frac{1}{m} \sum_{i=1}^m (dz^{(i)})$$
 
-The loss is to be minimized using garient descent optimization method. In this, we evaluate the gradient of the function and update the parameter till we reach the global minima. Following general update rules are applied:   
+```py
+def backward_linear(X, dz):
+  """
+    Compute the (dJ/dw, dJ/db)
 
-$ \mathbf w = \mathbf w - \alpha \frac {\partial L}{\partial \mathbf w}$  
+    Arguments:
 
-$ \mathbf b = \mathbf b - \alpha \frac {\partial L}{\partial \mathbf b}$  
+    x -- A 2D numpy array of size (nx, m)
+    dz -- (dJ/dz) Gradient of cost wrt linear output.
 
-Where,  
-        $ \alpha$ : Learning Rate (0.0001, 0.001, 0.01...)
+    Return:
+    dw, db -- scalar of float type.
+  """
 
-## Calculating Gradients for Output Layer
+  m = X.shape[1]
 
-The parameters of output layer are $w_{11}^{[2]}, w_{12}^{[2]}, w_{13}^{[2]}, w_{14}^{[2]}, b^{[2]}$. The gradients are computed in the same manner as derived in case of logistic regression as the **sigmoid function** is the activation function on output layer.     
+  dw = np.dot(X, dz.T)/m
 
-$\large \frac{\partial L}{\partial w_{11}^{[2]}}= \frac{\partial L}{\partial a^{[2]}} \frac{\partial a^{[2]}}{\partial z^{[2]}}  \frac{\partial z^{[2]}}{\partial w_{11}^{[2]}}=\frac{\partial L}{\partial z^{[2]}}\small a^{[1]}_1=(a^{[2]}-y)a^{[1]}_1$
+  db = np.sum((dz), dtype=np.float64, axis=1)/m
 
-$\large \frac{\partial L}{\partial w_{12}^{[2]}}= \frac{\partial L}{\partial a^{[2]}} \frac{\partial a^{[2]}}{\partial z^{[2]}}  \frac{\partial z^{[2]}}{\partial w_{12}^{[2]}}=\frac{\partial L}{\partial z^{[2]}}\small a^{[1]}_2=(a^{[2]}-y)a^{[1]}_2$
+  return dw, db
+```
 
-$\large \frac{\partial L}{\partial w_{13}^{[2]}}= \frac{\partial L}{\partial a^{[2]}} \frac{\partial a^{[2]}}{\partial z^{[2]}}  \frac{\partial z^{[2]}}{\partial w_{13}^{[2]}}=\frac{\partial L}{\partial z^{[2]}}\small a^{[1]}_3=(a^{[2]}-y)a^{[1]}_3$
+Check the function using the following
 
-$\large \frac{\partial L}{\partial w_{14}^{[2]}}= \frac{\partial L}{\partial a^{[2]}} \frac{\partial a^{[2]}}{\partial z^{[2]}}  \frac{\partial z^{[2]}}{\partial w_{14}^{[2]}}=\frac{\partial L}{\partial z^{[2]}}\small a^{[1]}_4=(a^{[2]}-y)a^{[1]}_4$
+```js
+backward_prop_test(backward_prop)
+```
+```py
+dw, db = backward_linear(X_train, dz)
+```
 
-$\large \frac{\partial L}{\partial b^{[2]}}= \frac{\partial L}{\partial a^{[2]}} \frac{\partial a^{[2]}}{\partial z^{[2]}}  \frac{\partial z^{[2]}}{\partial b^{[2]}}=\frac{\partial L}{\partial z^{[2]}}\small=(a^{[2]}-y)$
+You can now update the parameters. Write a function to implement the update equation.
 
+```js
+def update_parameters(w, b, dw, db, m_train, learning_rate = 0.002):
+  w = w - learning_rate * dw / m_train
+  b = b - learning_rate * db / m_train
+  return w, b
+```
+
+Now, its the time when you can arrange each of these steps to complete our logistic regtression model for binary classification using single neuron. This is basically exactly the same code we have developed in the last session where entire mathematical computation was explained.
+
+```js
+max_iteration=5000
+cost=np.zeros((max_iteration))
+
+w, b = initialize_with_zeros(nx)
+
+for i in range(max_iteration):
+
+  z = forward_linear(X_train, w, b)
+
+  A = forward_activation(z)
+
+  cost[i] = compute_cost(A, y_train)/m_train
+
+  dw, db = backward_prop(X_train, A, y_train)
+
+  w, b = update_parameters(w, b, dw, db, m_train, learning_rate = 0.002)
+
+# print(w, b)
+```
+This will give us optimum parameters. We have also computed the cost in each iteration. So, you can also plot the learning curve.
+
+```js
+plt.plot(cost)
+plt.ylabel('cost')
+plt.xlabel('iterations')
+plt.title("Learning rate")
+plt.show()
+```
+![Learning Curve](images/learning_curve.png)
+
+## Train Accuracy
+
+```js
+A_pred = forward_activation(forward_linear(X_train, w, b))
+
+y_pred = np.array([1 if pred > 0.5 else 0 for pred in A_pred[0]]).reshape(1, m_train)
+
+print((np.sum(y_pred == y_train))/m_train)
+```
+> 0.6555023923444976
+
+## Test Accuracy
+
+```js
+test_dataset = h5py.File(f'{path}/catvnoncat/test_catvnoncat.h5', "r")
+test_set_x_orig = np.array(test_dataset["test_set_x"])
+test_set_y = np.array(test_dataset["test_set_y"])
+m_test= test_set_x_orig.shape[0]
+test_set_x=test_set_x_orig.reshape(-1, m_test)
+X_test = test_set_x / 255.
+y_test=test_set_y
+```
+
+```js
+A_pred = forward_activation(forward_linear(X_test, w, b))
+
+y_pred = np.array([1 if pred > 0.5 else 0 for pred in A_pred[0]]).reshape(1, m_test)
+
+print((np.sum(y_pred == y_test))/m_test)
+```
+> 0.34
+
+This is the case of underfitting as the training accuracy is low because the model is too simple and the learning hasn’t converged. Test accuracy is much worse than training accuracy, which indicates poor generalization. It is not generalizing the learning on the test dataset.
+
+## Cat Classifier Using `SKLearn`

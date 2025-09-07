@@ -154,14 +154,7 @@ print(f'Derivative wrt b = {db}')
 
 $ \frac{\partial J}{\partial w} = \frac{1}{m} [(\hat {y}^{(1)}-y^{(1)}){x}^{(1)} + (\hat {y}^{(2)}-y^{(2)}){x}^{(2)} + (\hat {y}^{(3)}-y^{(3)}){x}^{(3)}+ ..... + (\hat {y}^{(m)}-y^{(m)}){x}^{(m)}]$
 
-$ \frac{\partial J}{\partial w} = \frac{1}{m} \begin{pmatrix}
-{x}^{(1)} & {x}^{(2)} & ⋯ & {x}^{(m)}
-\end{pmatrix}\begin{pmatrix}
-\hat {y}^{(1)}-y^{(1)}\\
-\hat {y}^{(2)}-y^{(2)}\\
-\vdots \\
-\hat {y}^{(m)}-y^{(m)}
-\end{pmatrix}$
+$ \frac{\partial J} {\partial w} = \frac{1}{m} \begin{pmatrix} {x}^{(1)} & {x}^{(2)} & ⋯ & {x}^{(m)} \end{pmatrix} \begin{pmatrix} \hat {y}^{(1)} - y^{(1)} \\ \hat {y}^{(2)}-y^{(2)} \\ \vdots \\ \hat {y}^{(m)}-y^{(m)} \end{pmatrix}$
 
 $ \frac{\partial J}{\partial w} = \frac{1}{m} \mathbf{x}(\mathbf {\hat {y}-y})^T$
 
@@ -267,11 +260,24 @@ You may also observe that in case we do not normalize the values, the learning b
 
 ## Linear Regression using `SKLearn`
 
-Copy example code 
+Copy example code from the `SKLearn` documentation [Documentation - Example](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html#sklearn.linear_model.LinearRegression).
 
-[Documentation - Example](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html#sklearn.linear_model.LinearRegression)
+The example code is as below
 
-After executing the code for `X` and `y`, let us again run the code, but, this time use the `X` and `y` you have created for the house price problem. 
+```js
+import numpy as np
+from sklearn.linear_model import LinearRegression
+X = np.array([[1, 1], [1, 2], [2, 2], [2, 3]])
+# y = 1 * x_0 + 2 * x_1 + 3
+y = np.dot(X, np.array([1, 2])) + 3
+reg = LinearRegression().fit(X, y)
+reg.score(X, y)
+reg.coef_
+reg.intercept_
+reg.predict(np.array([[3, 5]]))
+```
+
+After executing the example code for input data of `X` and `y` provided in the code, let us again run the examle code, but, this time use the `X` and `y` you have created for the house price problem. 
 
 ```js
 from sklearn import linear_model

@@ -1,174 +1,123 @@
-## Binary Classification using Logistic Rgression - Dataset
+## Binary Classification using Logistic Rgression
 
-- Will use `kaggle` dataset of cat.
-- The dataset is in HDF5 (Hierarchical Data Format version 5) data format
-- [h5py Documentation Link](https://docs.h5py.org/en/stable/quick.html)
-- HDF5 format is designed for storing and managing large and complex datasets.
-- HDF5 provides a flexible and efficient way to organize, store, and retrieve data.
-- It supports various types of data, including numerical arrays, images, tables, and text.
-- The h5py package is a Pythonic interface to the HDF5 binary data format.
+Logistic Regression is similar to the Linear Regression except linear Regression is used to solve Regression problems, whereas Logistic regression is used to solve the classification problems. Logistic regression predicts the output of a categorical dependent variable. It can be either `Yes` or `No`, `0` or `1`, `true` or `False`, etc. but instead of giving the exact value as 0 and 1, it gives the `probabilistic values` which lie between 0 and 1.
 
-**Fetch Dataset from Kaggle**
-- Download the data from the link below:  
-  [Download Catvnocat Dataset](https://www.kaggle.com/datasets/muhammeddalkran/catvnoncat)
-- Extract the zip file and keep that in a folder.  
-- or, use the `kagglehub` code given on the link. The is as below
+1. Logistic Regression is a statistical model that uses Logistic Function to model a binary classification problem
+2. `Logistic function` takes values either 0 or 1 when parameter is very large or small.
+3. In Logistic Rgression, we intend to estimate the model parameters such that the probability of the output is true given the input features.
 
-```js
-import kagglehub
-path = kagglehub.dataset_download("muhammeddalkran/catvnoncat")
-print("Path to dataset files:", path)
-```
-This will output path variable as
+$\hat{y}=P(y=1|x)$
 
-<pre>Path to dataset files: /kaggle/input/catvnoncat</pre>
+The probability is always between 0 and 1. So,
 
-Check the list in the path using `!ls /kaggle/input/catvnoncat/`. You will see another folder names `catvnocat`. Chaeck the files inside this. Following two files are available:
+$0 \le \hat{y} \le 1$
 
 
+## Mean Square Error (MSE)
 
-  *Details of datasets*
-  - Image size: 64x64
-  - Color space: RGB
-  - File format: h5
-  - Number of classes: 2 (cat, non-cat)
-  - Number of training images: 209
-  - Number of testing images: 50
+The squared error function for the logistic function may result in non-convex function, hence, the other function is used as loss function for as below:
 
-To represent color images, the red, green and blue channels (RGB) must be specified for each pixel, and so the pixel value is actually a vector of three numbers ranging from 0 to 255.
+$$L(a^{(i)}, y^{(i)}) =  - y^{(i)}  \log(a^{(i)}) - (1-y^{(i)} )  \log(1-a^{(i)})$$
+
+The above cost function is covex and hence we can have a global minima.
+
+Let us explore some more about these functions.
+
+Let consider a case of one feature ($nx=1$) and $x=1$, $b=0$ and $y=1$; also, ignoring the constant term of $2m$
+
+- Case -1 : y =1
+  $$L(a,y)= (\frac {1}{1+e^{-w}}-1)^{2} $$
+
+- Case -1 : y =0
+  $$L(a,y)= (\frac {1}{1+e^{-w}})^{2} $$
 
 ```js
-import numpy as np
-import h5py
 import matplotlib.pyplot as plt
+import numpy as np
 ```
-
-## Load Dataset
 
 ```js
-train_dataset = h5py.File(f'{path}/catvnoncat/train_catvnoncat.h5', "r")
-test_dataset = h5py.File(f'{path}/catvnoncat/test_catvnoncat.h5', "r")
+# w axis
+w = np.linspace(-7, 7, 400)
+a = 1/(1 + np.exp(-w))
+
+
+# Loss functions
+loss_mse_y1 = 0.5 * (a - 1) ** 2
+loss_mse_y0 = 0.5 * (a - 0) ** 2
+
+# Plot
+plt.figure(figsize=(10,6))
+
+plt.plot(w, loss_mse_y1, label="MSE (y=1)", color="blue")
+plt.plot(w, loss_mse_y0, label="MSE (y=0)", color="green")
+
+plt.xlabel("w")
+plt.ylabel("Loss")
+plt.title("MSE Loss (as function of w)")
+plt.legend()
+plt.grid(True)
+plt.show()
 ```
 
- `h5py.File` acts like a Python dictionary, thus we can check the keys using `key()` method with list or `for loop`. [h5py Documentation Link](https://docs.h5py.org/en/stable/quick.html)
+![MSE Loss](images/loss_mse.png)
+
+We can see the curves are not concaves at all the points. So, we will assume another function known as binary cross entropy function for our logistic regression problem.
+
+## Binary Cross Entropy (BCE) Loss
+
+The binary cross entropy loss function is as below:
+
+$$L(a^{(i)}, y^{(i)}) =  - y^{(i)}  \log(a^{(i)}) - (1-y^{(i)} )  \log(1-a^{(i)})$$
+
+The above cost function is covex and hence we can have a global minima.
 
 ```js
-print(f'Data Type {type(train_dataset)}')
-print(f'Keys : {train_dataset.keys()}')
-print(f'List containing keys only {list(train_dataset.keys())}')
-```
-```Output
-Data Type <class 'h5py._hl.files.File'>
-Keys : <KeysViewHDF5 ['list_classes', 'train_set_x', 'train_set_y']>
-List containing keys only ['list_classes', 'train_set_x', 'train_set_y']
-```
-Key values are the `Groups` like a folder in file syatem.The groups contain dataset as files in the folders. 
+# w axis
+w = np.linspace(-4, 4, 400)
+a = 1/(1 + np.exp(-w))
 
-```js
-for key in train_dataset.keys():
-    print(train_dataset[key], type(train_dataset[key]))
-```
-```output
-<HDF5 dataset "list_classes": shape (2,), type "|S7"> <class 'h5py._hl.dataset.Dataset'>
-<HDF5 dataset "train_set_x": shape (209, 64, 64, 3), type "|u1"> <class 'h5py._hl.dataset.Dataset'>
-<HDF5 dataset "train_set_y": shape (209,), type "<i8"> <class 'h5py._hl.dataset.Dataset'>
-```
-The, `<class 'h5py._hl.dataset.Dataset'>` is not the data itself, but a handle (object) pointing to the dataset inside the HDF5 file. 
+# Loss functions
+loss_mse_y1 = 0.5 * (a - 1) ** 2
+loss_mse_y0 = 0.5 * (a - 0) ** 2
 
-```js
-print(type(train_dataset["train_set_y"]))
-list(train_dataset["train_set_y"])
-```
-The list looks like a Numpy array, but it is not. To actually use the values, you typically convert it into a NumPy array.
+loss_bce_y1 = -np.log(a + 1e-19)
+loss_bce_y0 = -np.log(1 - a + 1e-19)
 
-```js
-a=np.array(train_dataset["list_classes"])
-print(a, a.dtype)
-```
-In NumPy, the `|S7` data type represents a fixed-length string of 7 characters. The S stands for string, and the number 7 indicates the length of the string. This data type is useful when you want to store and manipulate fixed-length strings in a NumPy array. Each element of the array will be a string of exactly 7 characters.
+# Plot
+plt.figure(figsize=(10,6))
 
-If you want to store a string of 4 characters in a NumPy array with the |S7 data type, you can do so by using a fixed-length string of length 7, where the remaining 3 characters are filled with spaces.
+plt.plot(w, loss_mse_y1, label="MSE (y=1)", color="blue")
+plt.plot(w, loss_bce_y1, label="Cross-Entropy (y=1)", color="red")
+plt.plot(w, loss_mse_y0, label="MSE (y=0)", color="green")
+plt.plot(w, loss_bce_y0, label="Cross-Entropy (y=0)", color="orange")
 
-## Convert `h5py` Data into NumPy Data
-
-```js
-#train set features
-train_set_x_orig = np.array(train_dataset["train_set_x"])
-
-#train set labels
-train_set_y = np.array(train_dataset["train_set_y"])
-
-print(type(train_set_x_orig), type(train_set_y))
-print(train_set_x_orig.dtype, train_set_y.dtype)
-
-print(train_set_x_orig.shape)
-print(train_set_y.shape)
-print(train_set_y[0])
-print(type(train_set_x_orig))
-
-```
-Shape of the feature matrix (`train_set_x_orig`) is **(209, 64, 64, 3)** and the shape of output label matrix (`train_set_y`) is **(209,)**.
-
-```js
-m_train=train_set_x_orig.shape[0]
-m_test=test_set_x_orig.shape[0]
-num_px=train_set_x_orig.shape[1]
-num_py=train_set_x_orig.shape[2]
-print ("Number of training examples: m_train = ", m_train)
-print ("Number of testing examples: m_test = ",m_test)
-print ("Size of image in pixels: num_px, num_py = " + str(num_px) + "," + str(num_py))
-```
-```output
-Number of training examples: m_train =  209
-Number of testing examples: m_test =  50
-Size of image in pixels: num_px, num_py = 64,64
+plt.xlabel("w")
+plt.ylabel("Loss")
+plt.title("Comparison of MSE vs Cross-Entropy Loss (as function of w)")
+plt.legend()
+plt.grid(True)
+plt.show()
 ```
 
-## Show cat image - MatPlotLib
+![MSE-BCE Loss](images/loss_bce.png)
 
-```js
-index = 2
-plt.imshow(train_set_x_orig[index])
-```
-![Cat Image](images/image_index2.png)
+- For y = 1, cross-entropy loss $L(w, y) =  - \log(w)$ is minimized when
+  $w \to \infty $
 
-Chnage the index to show other images. You can also show the images in a grid
+- For y = 0, cross-entropy loss $L(w, y) =  - \log(1 - w)$ is minimized when $w \to -\infty $
 
-```js
-for i in range(16):
-  plt.subplot(4, 4, i+1)
-  plt.imshow(test_set_x_orig[i])
-  plt.axis('off')
-```
-This will show 16 images in 4 x 4 grid.
+So it seems like the optimizer would want to send w to both +∞ and −∞ at the same time.
 
-![Cat Image](images/image_grid16.png)
+The model doesn't optimize for just one sample — it minimizes the average loss over all samples:
+For samples with y=1, the optimizer pushes their w higher and for samples with y=0, the optimizer pushes their w lower.
 
+Since all predictions share the same weight vector w, the algorithm balances the updates so that points from different classes are separated. w aligns with the direction that best discriminates between the two classes.
 
-## Setting Data as per Matrix Notation
-Our formulation takes all features in a single column and the training examples are to be arranged in different column. This makes a matrix of rows equals number of features and columns equals number of training examples. 
+## Cost Function for Logistic Regression
 
-The shape of **`X`** matrix is $\mathcal {(nx, m)}$ where each columns represents the features of each training set; 
+The sum of all the loss over entire training set is called the cost. The cost function is therefore computed by summing over all training examples:
 
-Where,   
+$$J(\mathbf{w},b) = \frac{1}{m} \sum_{i=1}^m L(a^{(i)}, y^{(i)})$$
 
-$\mathcal {nx=px * py * 3}$ for the images as input and $m$ is the training examples.
-
-So, we have to reshape to `train_set_x_orig` to `(nx,m_train)`. This will be achieved in two steps:   
-
-***Step-1*** : Respahe `train_set_x_orig` to `(train_set_x_orig.shape[0],-1)`. -1 is used for unknown number of columns (known presently as `nx`)   
-***Step-2*** : Transpose the matrix to get the desired dimension `(nx, m)`.
-
-```js
-train_set_x_flatten=train_set_x_orig.reshape(train_set_x_orig.shape[0],-1).T
-test_set_x_flatten=test_set_x_orig.reshape (test_set_x_orig.shape[0],-1).T
-```
-
-Optimizing the parameters is best suited on the data of the same range. Let's normalize our dataset with the maximum possible pixel value i.e. 255.
-
-```js
-x_train = train_set_x_flatten / 255.
-y_train=train_set_y
-x_test = test_set_x_flatten / 255.
-y_train.shape
-```
+$$J = -\frac{1}{m}\sum_{i=1}^{m}(y^{(i)}\log(a^{(i)})+(1-y^{(i)})\log(1-a^{(i)}))$$

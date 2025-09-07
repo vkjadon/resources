@@ -195,7 +195,7 @@ print(f'Derivative wrt b = {db}')
 
 $ \frac{\partial J}{\partial w_1} = \frac{1}{m} \begin{pmatrix} {x}^{(1)}_1 & {x}^{(2)}_1 & {x}^{(3)}_1 & {x}^{(4)}_1 & {x}^{(5)}_1 \end{pmatrix} \begin{pmatrix} \hat {y}^{(1)}-y^{(1)} \\ \hat {y}^{(2)}-y^{(2)}\\ \hat {y}^{(3)}-y^{(3)} \\ \hat {y}^{(4)}-y^{(4)} \\ \hat {y}^{(5)}-y^{(5)} \end{pmatrix}$
 
-$$ \frac{\partial J}{\partial w_1} = \frac{1}{m} \mathbf{x}_{(1)}(\mathbf{\hat {y}-y})^T$$
+$$ \frac{\partial J}{\partial w_1} = \frac{1}{m} \mathbf{x}_{1}(\mathbf{\hat {y}-y})^T$$
 
 ```js
 dw1=np.dot(X[0], (yhat-y).T)
@@ -205,7 +205,7 @@ print(f'Derivative wrt w1 = {dw1}')
 
 $ \frac{\partial J}{\partial w_2} = \frac{1}{m} \begin{pmatrix} {x}^{(1)}_2 & {x}^{(2)}_2 & {x}^{(3)}_2 & {x}^{(4)}_2 & {x}^{(5)}_2 \end{pmatrix} \begin{pmatrix} \hat {y}^{(1)}-y^{(1)}\\ \hat {y}^{(2)}-y^{(2)}\\ \hat {y}^{(3)}-y^{(3)}\\ \hat {y}^{(4)}-y^{(4)}\\ \hat {y}^{(5)}-y^{(5)} \end{pmatrix}$
 
-$$ \frac{\partial J}{\partial w_2} = \frac{1}{m} \mathbf{x}_{(2)}(\mathbf{\hat {y}-y})^T$$
+$$ \frac{\partial J}{\partial w_2} = \frac{1}{m} \mathbf{x}_{2}(\mathbf{\hat {y}-y})^T$$
 
 ```js
 dw2=np.dot(X[1], (yhat-y).T)

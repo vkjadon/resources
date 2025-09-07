@@ -116,7 +116,7 @@ X_dataset, y_dataset = make_classification(
 plot_scatter(X_dataset, y_dataset, 2)
 ```
 
-In the figure below, the classes are three in different colors (Yellow, Green and Brown). In this case the plot should exactly match as we have used seed based random generator as specified by `random_state`. The seed is `42`.
+In the figure below, the classes are three in different colors (Yellow, Green and Brown). In this case the plot should exactly match as we have used random generator as specified by `random_state`. You will find  `np.random.seed()` at some places to sets a global seed, affecting all random number generation operations that rely on the default `np.random` module. In contrast, `np.random.RandomState()` creates a local instance, allowing for independent control over randomness.
 
 ![Dataset](images/dataset2DC3.png)
 
@@ -199,9 +199,9 @@ def forward_linear(x, w, b):
 
 ## Forward Propogation - Activated Output
 
-In Logistic regression, instead of fitting a regression line, we fit an "S" shaped logistic function, which predicts values between 0 and 1. This process is the second part of forward propogation and called activation process. The output of this is called activated output represented by $a^{(i)}$. For one neuron problem, this is also the preducted value ($\hat{y}^{(i)}$) for the inilized parameters $w$ and $b$.
+In Logistic regression, instead of fitting a regression line, we fit an "S" shaped logistic function, which predicts values between 0 and 1. This process is the second part of forward propogation and called activation process. The output of this is called activated output represented by $a^{(i)}$. For one neuron problem, this is also the preducted value ($\hat{y}^{(i)}$) for the initialized parameters $w$ and $b$ for first iteration and then updated paratemetrs for the subsequent iterations.
 
-$\hat{y}^{(i)} = a^{(i)} = σ (z^{(i)}) = \frac {1}{1+e^{-z^{(i)}}}$
+$\hat{y}^{(i)} = a^{(i)} = \frac {1}{1+e^{-z^{(i)}}}$
 
 ```js
 def activation(z):
@@ -214,108 +214,15 @@ def activation(z):
 
 ## Loss Function
 
-### Mean Square Error (MSE)
-
 The squared error function for the logistic function may result in non-convex function, hence, the other function is used as loss function for as below:
 
 $$L(a^{(i)}, y^{(i)}) =  - y^{(i)}  \log(a^{(i)}) - (1-y^{(i)} )  \log(1-a^{(i)})$$
 
-The above cost function is covex and hence we can have a global minima.
-
-Let us explore some more about these functions.
-
-The squared error function for the logistic function may result in non-convex function.
-
-$J(a,y)=\frac{1}{2m}\sum (a-y)^{2} $
-
-Let consider a case of one feature ($nx=1$) and $x=1$, $b=0$ and $y=1$; also, ignoring the constant term of $2m$
-
-- Case -1 : y =1
-  $$L(a,y)= (\frac {1}{1+e^{-w}}-1)^{2} $$
-
-- Case -1 : y =0
-  $$L(a,y)= (\frac {1}{1+e^{-w}})^{2} $$
-
-```js
-# w axis
-w = np.linspace(-7, 7, 400)
-a = forward_activation(w)
-
-# Loss functions
-loss_mse_y1 = 0.5 * (a - 1) ** 2
-loss_mse_y0 = 0.5 * (a - 0) ** 2
-
-# Plot
-plt.figure(figsize=(10,6))
-
-plt.plot(w, loss_mse_y1, label="MSE (y=1)", color="blue")
-plt.plot(w, loss_mse_y0, label="MSE (y=0)", color="green")
-
-plt.xlabel("w")
-plt.ylabel("Loss")
-plt.title("MSE Loss (as function of w)")
-plt.legend()
-plt.grid(True)
-plt.show()
-```
-
-![MSE Loss](images/loss_mse.png)
-
-We can see the curves are not conves at all the points. So, we will assume another function known as binary cross entropy function for our logistic regression problem.
-
-### Binary Cross Entropy (BCE) Loss
-
-The binary cross entropy loss function is as below:
-
-$$L(a^{(i)}, y^{(i)}) =  - y^{(i)}  \log(a^{(i)}) - (1-y^{(i)} )  \log(1-a^{(i)})$$
-
-The above cost function is covex and hence we can have a global minima.
-
-```js
-# w axis
-w = np.linspace(-4, 4, 400)
-a = forward_activation(w)
-
-# Loss functions
-loss_mse_y1 = 0.5 * (a - 1) ** 2
-loss_mse_y0 = 0.5 * (a - 0) ** 2
-
-loss_bce_y1 = -np.log(a + 1e-19)
-loss_bce_y0 = -np.log(1 - a + 1e-19)
-
-# Plot
-plt.figure(figsize=(10,6))
-
-plt.plot(w, loss_mse_y1, label="MSE (y=1)", color="blue")
-plt.plot(w, loss_bce_y1, label="Cross-Entropy (y=1)", color="red")
-plt.plot(w, loss_mse_y0, label="MSE (y=0)", color="green")
-plt.plot(w, loss_bce_y0, label="Cross-Entropy (y=0)", color="orange")
-
-plt.xlabel("w")
-plt.ylabel("Loss")
-plt.title("Comparison of MSE vs Cross-Entropy Loss (as function of w)")
-plt.legend()
-plt.grid(True)
-plt.show()
-```
-
-![MSE-BCE Loss](images/loss_bce.png)
-
-- For y = 1, cross-entropy loss $L(w, y) =  - \log(w)$ is minimized when
-  $w \to \infty $
-
-- For y = 0, cross-entropy loss $L(w, y) =  - \log(1 - w)$ is minimized when $w \to -\infty $
-
-So it seems like the optimizer would want to send w to both +∞ and −∞ at the same time.
-
-The model doesn't optimize for just one sample — it minimizes the average loss over all samples:
-For samples with y=1, the optimizer pushes their w higher and for samples with y=0, the optimizer pushes their w lower.
-
-Since all predictions share the same weight vector w, the algorithm balances the updates so that points from different classes are separated. w aligns with the direction that best discriminates between the two classes.
+The above cost function is covex and hence we can have a global minima. More deeper insight is available in the next session.
 
 ## Cost Function for Logistic Regression
 
-The sum of all the loss over entire training set is called the cost. The cost function is therefore computed by summing over all training examples:
+The mean of all the losses over entire training set is called the cost. The cost function is therefore computes as:
 
 $$J(\mathbf{w},b) = \frac{1}{m} \sum_{i=1}^m L(a^{(i)}, y^{(i)})$$
 
@@ -326,57 +233,82 @@ def compute_cost(A, y_train):
   return np.squeeze(-np.sum((y_train*np.log(A)+(1-y_train)*np.log(1-A)),axis=1))
 ```
 
-The cost is to be minimized and the optimum parameters are to be evaluated. We can use gradient descent. The update rule is as below:
-
-$ \mathbf{w} = \mathbf{w} - \alpha \frac {\partial J}{\partial \mathbf{w}}$
-
-$ b = b - \alpha \frac {\partial J}{\partial b}$
-
-Where,  
- $ \alpha$ : Learning Rate (0.0001, 0.001, 0.01...)
-
-The goal is to learn $w$ and $b$ by minimizing the cost function $J$
+The cost is to be minimized to obtain the optimum parameters using gradient descent. 
 
 ## Gradient Descent
 
 To understand the basics of the gradient descent, let us consider one training example and multiple features. Then we can write the forward propogation equations by dropping the superscript $i$:
 
-$z = w*1x_1+w_2x_2+.....+w*{nx}x_{nx}+b $
+$z = w_1x_1+w_2x_2+.....+w_{nx}x_{nx}+b $
 
 $a = \frac {1}{1+e^{-z}}$
 
 $L(a, y) =  - y \log(a) - (1-y) \log(1-a)$
 
-To find the upated values of the parameters, we have to find the gradients $ \frac{\partial L(a, y)}{\partial w_j}$, $ \frac{\partial L(a, y)}{\partial b}$.
+In gradient descent, the parameters are updated to find the global minimima using the garient of the loss function
+
+$ \mathbf{w} = \mathbf{w} - \alpha \frac {\partial L}{\partial \mathbf{w}}$
+
+$ b = b - \alpha \frac {\partial L}{\partial b}$
+
+Where,  
+ $ \alpha$ : Learning Rate (0.0001, 0.001, 0.01...)
+
+To find the upated values of the parameters, we have to find the gradients (the subscript $j$ represnts the $j^{th}$ features)
+
+$$ \frac{\partial L(a, y)}{\partial w_j} ; \frac{\partial L(a, y)}{\partial b} $$
 
 The loss function is a function of $a$ and $y$, so we have to use chain rule going backward from the last step to first step.
 
 Note that $a$ is a function of $z$ and $z$ is a function of $w$.
 
-$\frac{\partial L(a, y)}{\partial w_j}= \frac{\partial L(a, y)}{\partial a} \frac{\partial a}{\partial z}  \frac{\partial z}{\partial w_j}$
+$$\frac{\partial L(a, y)}{\partial w_j}= \frac{\partial L(a, y)}{\partial a} . \frac{\partial a}{\partial z} . \frac{\partial z}{\partial w_j}$$
 
 Let us try to evaluate the each term separately.
 
-$\frac{\partial L(a, y)}{\partial a}=-\frac {y}{a}+\frac {(1-y)}{(1-a)}$
+$$\frac{\partial L(a, y)}{\partial a}=-\frac {y}{a}+\frac {(1-y)}{(1-a)}$$
+
+```
+da = - (np.divide(y, a) - np.divide(1 - y, 1 - a))
+```
 
 Using
-$\frac{\partial (\frac{u(x)}{v(x)})}{\partial y}=\frac {vu'-uv'}{v^2}$, we evaluate
 
-$ \frac{\partial a}{\partial z}=\frac{\partial }{\partial z} (\frac {1}{1+e^{-z}}) = \frac {e^{-z}}{(1+e^{-z})^2}=\frac {1}{1+e^{-z}}\frac {1+e^{-z}-1}{1+e^{-z}} =a(\frac {1+e^{-z}}{1+e^{-z}} - \frac {1}{1+e^{-z}})$
+$$y= \frac{u(x)}{v(x)}; \frac{\partial y} {\partial x}=\frac {vu'-uv'}{v^2}$$ 
 
-$ \frac{\partial a}{\partial z}=a(1-a)$
+We evaluate
+
+$$ \frac{\partial a}{\partial z}=\frac{\partial }{\partial z} (\frac {1}{1+e^{-z}}) $$
+$$= \frac {e^{-z}}{(1+e^{-z})^2}$$
+
+$$ =\frac {1}{1+e^{-z}}\frac {1+e^{-z}-1}{1+e^{-z}}$$
+$$ =a(\frac {1+e^{-z}}{1+e^{-z}} - \frac {1}{1+e^{-z}})$$
+
+The vectorized form
+
+$$ \frac{\partial \mathbf a}{\partial \mathbf z}=\mathbf a(1- \mathbf a)$$
 
 <div style="background-color:#20212b ; width: 100%; text-align: center;">
   <img src="images/backward_activation.png" alt="Linear Part" width="500">
 </div>
 
-$ \frac{\partial z}{\partial w_j}=x_j$
+```py
+def backward_activation(z, da):
 
-$\frac{\partial L(a, y)}{\partial w_j}= x_j(a-y)$
+  s = 1/(1+np.exp(-z))
+  ds_da = s * (1 - s)
+  dz = da * ds_da
+
+  return dz
+```
+
+$$ \frac{\partial z}{\partial w_j}=x_j $$
+
+$$ \frac{\partial L(a, y)}{\partial w_j}= x_j(a-y) $$
 
 Similarly,
 
-$\frac{\partial L(a, y)}{\partial b}= (a-y)$
+$$ \frac{\partial L(a, y)}{\partial b}= (a-y)$$
 
 Let us expand the expressions for $m$ training examples by taking the mean of the sum over all the training examples
 
@@ -388,11 +320,12 @@ $$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum _{i=1} ^m (a^{(i)}-y^{(i)})$
 <div style="background-color:#20212b ; width: 100%; text-align: center;">
   <img src="images/backward_linear.png" alt="Linear Part" width="600">
 </div>
+
 **Substituting**
 
-$ \frac{\partial J}{\partial w_1} = \frac{1}{m} [({a}^{(1)}-y^{(1)}){x}^{(1)}_1 + ({a}^{(2)}-y^{(2)}){x}^{(2)}_1 + .... + ({a}^{(m)}-y^{(m)}){x}^{(m)}_1]$
+$$ \frac{\partial J}{\partial w_1} = \frac{1}{m} [({a}^{(1)}-y^{(1)}){x}^{(1)}_1 + ({a}^{(2)}-y^{(2)}){x}^{(2)}_1 + .... + ({a}^{(m)}-y^{(m)}){x}^{(m)}_1]$$
 
-$ \frac{\partial J}{\partial w_1} = \frac{1}{m} [({a}^{(1)}-y^{(1)}){x}^{(1)}_2 + ({a}^{(2)}-y^{(2)}){x}^{(2)}_2 + .... + ({a}^{(m)}-y^{(m)}){x}^{(m)}_2]$
+$$ \frac{\partial J}{\partial w_1} = \frac{1}{m} [({a}^{(1)}-y^{(1)}){x}^{(1)}_2 + ({a}^{(2)}-y^{(2)}){x}^{(2)}_2 + .... + ({a}^{(m)}-y^{(m)}){x}^{(m)}_2]$$
 
 ```js
 A = forward_linear(X_train, np.array([1.0, 1.0]), 0.0)
@@ -402,7 +335,7 @@ dw2=(np.sum(np.multiply(X_train[1], (A-y_train)), axis=1))*(1/m_train)
 dw = np.array([dw1, dw2]).reshape(2,1)
 ```
 
-$ \frac{\partial J}{\partial b} = \frac{1}{m} [({a}^{(1)}-y^{(1)}) + ({a}^{(2)}-y^{(2)}) + .... + ({a}^{(m)}-y^{(m)})]$
+$$ \frac{\partial J}{\partial b} = \frac{1}{m} [({a}^{(1)}-y^{(1)}) + ({a}^{(2)}-y^{(2)}) + .... + ({a}^{(m)}-y^{(m)})] $$
 
 ```js
 db=(1/m_train)*np.sum((A-y_train), axis=1)
@@ -413,41 +346,53 @@ $ \frac{\partial J}{\partial w_1} = \frac{1}{m} \begin{pmatrix} {x}^{(1)}_1 & {x
 
 $ \frac{\partial J}{\partial w_2} = \frac{1}{m} \begin{pmatrix} {x}^{(1)}_2 & {x}^{(2)}_2 & \cdots &{x}^{(m)}_2 & \end{pmatrix}\begin{pmatrix} {a}^{(1)}-y^{(1)}\\ {a}^{(2)}-y^{(2)}\\ \vdots \\ {a}^{(m)}-y^{(m)} \end{pmatrix}$
 
-$ \frac{\partial J}{\partial w*1} = \frac{1}{m} \mathbf{x}*{(1)}(\mathbf{\hat {y}-y})^T$
+$ \frac{\partial J}{\partial w_1} = \frac{1}{m} \mathbf{x}_{1}(\mathbf{\hat {y}-y})^T$
 
-$ \frac{\partial J}{\partial w*2} = \frac{1}{m} \mathbf{x}*{(2)}(\mathbf{\hat {y}-y})^T$
+$ \frac{\partial J}{\partial w_2} = \frac{1}{m} \mathbf{x}_{2}(\mathbf{\hat {y}-y})^T$
 
 $ \frac {\partial J}{\partial \mathbf{w}} = \begin{pmatrix} \frac{\partial J}{\partial w_1} \\ \frac{\partial J}{\partial w_2} \end{pmatrix}$
 
 $ \frac {\partial J}{\partial \mathbf{w}} = \frac{1}{m} \begin{pmatrix}{x}_1^{(1)} & {x}_1^{(2)} & \cdots & {x}_1^{(m)} \\ {x}_2^{(1)} & {x}_2^{(2)} & \cdots & {x}_2^{(m)} \end{pmatrix} \begin{pmatrix} {a}^{(1)}-y^{(1)} \\ {a}^{(2)}-y^{(2)} \\ {a}^{(3)}-y^{(3)} \\ {a}^{(4)}-y^{(4)} \\ {a}^{(5)}-y^{(5)} \\ \vdots \end{pmatrix}$
 
 In matrix form,  
-$$ \frac{\partial J}{\partial \mathbf{w}} = \frac{1}{m}\mathbf {X(a-y)}^T$$
+$$ \frac{\partial J}{\partial \mathbf{w}} = \frac{1}{m}\mathbf {X(a-y)}^T = \frac{1}{m}\mathbf {X(dz)}^T $$
 
-$$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)})$$
+$$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)}) =  \frac{1}{m} \sum_{i=1}^m  z^{(i)}$$
 
 ![Logistic Regression Model](images/backward.png)
 
-```js
-def compute_gradient(x, A, y):
 
-  dw = np.dot(x,(A-y).T)
-  db = np.sum((A-y), dtype=np.float64, axis=1)
+
+```js
+def backward_linear(X, dz):
+
+  m = X.shape[1]
+  dw = np.dot(X, dz.T)/m
+  db = np.sum((dz), dtype=np.float64, axis=1)/m
 
   return dw, db
 ```
+$ \mathbf{w} = \mathbf{w} - \alpha \frac {\partial J}{\partial \mathbf{w}}$
+
+$ b = b - \alpha \frac {\partial J}{\partial b}$
+
+Where,  
+ $ \alpha$ : Learning Rate (0.0001, 0.001, 0.01...)
+
+The goal is to learn $w$ and $b$ by minimizing the cost function $J$
 
 ```js
-print(X_train.shape, A.shape)
-dw, db = compute_gradient(X_train, A, y_train)
-print(dw/m_train)
+def update_parameters(w, b, dw, db, learning_rate = 0.002):
+  w = w - learning_rate * dw
+  b = b - learning_rate * db
+  return w, b
 ```
 
 ## Python implementation
 
 ```js
 learning_rate=0.05
-max_iteration=500
+max_iteration=50000
 cost=np.zeros((max_iteration))
 
 w, b = initialize_with_zeros(nx)
@@ -464,15 +409,19 @@ for i in range(max_iteration):
 
   cost[i] = compute_cost(A, y_train)/m_train
 
-  dw, db = compute_gradient(X_train, A, y_train)
+  da = - (np.divide(y_train, A) - np.divide(1 - y_train, 1 - A))
 
-  #print("Gradients dw, b", dw,db)
+  dz = backward_activation(z, da)
 
-  w=w-learning_rate*dw/m_train
-  b=b-learning_rate*db/m_train
+  dw, db = backward_linear(X_train, dz)
 
+  w, b = update_parameters(w, b, dw, db, learning_rate = 0.002)
+
+# print(" Cost", cost)
 print(w, b)
 ```
+
+![Learning Curve](images/learning_curve.png)
 
 ```js
 # Plot learning curve (with costs)
@@ -503,13 +452,29 @@ print((np.sum(y_pred == y_train))/m_train)
 ```
 
 ```js
-A=1/(1+np.exp(-np.dot(w.T, X_test)))
-Y_prediction_test=np.zeros((1,X_test.shape[1]))
-for i in range(A.shape[1]):
-  if A[0,i] > 0.5:
-    Y_prediction_test[0,i]=1
-  else:
-    Y_prediction_test[0,i]=0
-print("Testing accuracy: {} %".format(100-np.mean(np.abs(Y_prediction_test-y_test))*100))
-# print(y_train)
+A_pred = forward_activation(forward_linear(X_test, w, b))
+
+y_pred = np.array([1 if pred > 0.5 else 0 for pred in A_pred[0]]).reshape(1, m_test)
+
+print((np.sum(y_pred == y_test))/m_test)
 ```
+## Using `SKLearn`
+
+```js
+from sklearn.linear_model import LogisticRegression
+lr = LogisticRegression()
+lr.fit(X_train.T, y_train.reshape(m_train))
+print(lr.coef_)
+print(lr.intercept_)
+```
+
+```js
+y_pred = lr.predict(X_train.T)
+print((np.sum(y_pred == y_train.reshape(m_train)))/m_train)
+```
+
+```js
+y_pred = lr.predict(X_test.T)
+print((np.sum(y_pred == y_test.reshape(m_test)))/m_test)
+```
+
