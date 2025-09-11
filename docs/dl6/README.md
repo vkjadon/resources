@@ -21,6 +21,7 @@ except:
   pass
 ! git clone https://github.com/vkjadon/utils/
 ```
+
 Run the cell to import necessary modules
 
 ```js
@@ -29,6 +30,7 @@ import h5py
 import matplotlib.pyplot as plt
 from utils.public_tests import *
 ```
+
 ### Fetch Dataset from Kaggle
 - Import data from Kaggle
 - Use <a href="https://www.kaggle.com/muhammeddalkran/catvnoncat" target="_blank"> this Link </a>  
@@ -337,10 +339,10 @@ $L(\mathbf{a}, \mathbf{y}) =  - \mathbf{y}  \log(\mathbf{a}) - (1-\mathbf{y})  \
 
 The vectorized form of the gradient ($dL/da$) is 
 
-$da= - \frac{\mathbf{y}}{\mathbf{a}} - \frac{1-\mathbf{y}}{1-\mathbf{a}}$
+$da= - \frac{\mathbf{y}}{\mathbf{a}} + \frac{1-\mathbf{y}}{1-\mathbf{a}}$
 
 ```js
-da = - (np.divide(y_train, A) - np.divide(1 - y_train, 1 - A))
+da = - (np.divide(y_train, A) + np.divide(1 - y_train, 1 - A))
 ```
 
 <div style="background-color:#20212b ; width: 100%; text-align: center;">
@@ -505,6 +507,7 @@ print((np.sum(y_pred == y_test))/m_test)
 ```
 > 0.34
 
-This is the case of underfitting as the training accuracy is low because the model is too simple and the learning hasn’t converged. Test accuracy is much worse than training accuracy, which indicates poor generalization. It is not generalizing the learning on the test dataset.
+This is the case of underfitting as the training accuracy is low because the model is too simple and the learning hasn’t converged. Test accuracy is much worse than training accuracy, which indicates poor generalization. It is not generalizing the learning on the test dataset. It can also be cosidered as high variance problem.
 
 ## Cat Classifier Using `SKLearn`
+

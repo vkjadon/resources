@@ -12,7 +12,7 @@ The probability is always between 0 and 1. So,
 
 $0 \le \hat{y} \le 1$
 
-## Setting up Problem
+## Setting up Problem - Single Neuron Model
 
 Let,  
 $m$ : training examples  
@@ -25,6 +25,8 @@ Let us write $z$ for the output as linear combinations of weights and input feat
 
 $z^{(i)} = w_1x^{(i)}_1+w_2x^{(i)}_2+.....+w_{nx}x^{(i)}_{nx}+b $
 
+$z^{(i)} = \mathbf {w}^T \mathbf {x}^{(i)}+b $
+
 Feature vector for $i^{th}$ training example:
 
 $\mathbf{x}^{(i)} =\begin{pmatrix}{x}_1^{(i)} \\ {x}_2^{(i)} \\ \vdots \\ {x}_{nx}^{(i)}\end{pmatrix}$
@@ -35,11 +37,20 @@ $y^{(i)}$ = (0 or 1)
 
 $ \mathbf{y} = \begin{pmatrix} {y}^{(1)} & {y}^{(2)} & \cdots & {y}^{(m)}\end{pmatrix}$
 
-Feature vector of the problem dataset:
+$ \mathbf{z}$ and $\mathbf{a} $ will have the same shape as $\mathbf{y}$ 
 
-$ \mathbf{X} = \begin{pmatrix}\mathbf{x}^{(1)} & \mathbf{x}^{(2)} & \cdots & \mathbf{x}^{(m)}\end{pmatrix}$
+$ \mathbf{z} = \begin{pmatrix} {z}^{(1)} & {z}^{(2)} & \cdots & {z}^{(m)}\end{pmatrix}$
 
-$ \mathbf{X} = \begin{pmatrix}{x}_1^{(1)} & {x}_1^{(2)} & \cdots & {x}_1^{(m)} \\ {x}_2^{(1)} & {x}_2^{(2)} & \cdots & {x}_2^{(m)} \\ \vdots & \vdots & \cdots & \vdots \\ {x}_{nx}^{(1)} & {x}_{nx}^{(2)} & \cdots & {x}_{nx}^{(m)} \end{pmatrix}$
+$ \mathbf{a} = \begin{pmatrix} {a}^{(1)} & {a}^{(2)} & \cdots & {a}^{(m)}\end{pmatrix}$
+
+<div class="note-box">
+  Feature vector of the problem dataset:
+
+  $ \mathbf{X} = \begin{pmatrix}\mathbf{x}^{(1)} & \mathbf{x}^{(2)} & \cdots & \mathbf{x}^{(m)}\end{pmatrix}$
+
+  $ \mathbf{X} = \begin{pmatrix}{x}_1^{(1)} & {x}_1^{(2)} & \cdots & {x}_1^{(m)} \\ {x}_2^{(1)} & {x}_2^{(2)} & \cdots & {x}_2^{(m)} \\ \vdots & \vdots & \cdots & \vdots \\ {x}_{nx}^{(1)} & {x}_{nx}^{(2)} & \cdots & {x}_{nx}^{(m)} \end{pmatrix}$
+
+</div>
 
 Parameter vector :
 
@@ -192,11 +203,23 @@ Next, is to compute the linear output using $z^{(i)} = \mathbf{w}^T \mathbf{x}^{
 import numpy as np
 def initialize_with_zeros(nx):
   return np.zeros(nx).reshape(nx,1), 0.0
+```
+Using $ z^{(i)}  = \mathbf {w}^T \mathbf {x^{(i)}} + b $ and $\mathbf{z} = \begin{bmatrix} \mathbf {z}^{(1)} & \mathbf {z}^{(2)} & \cdots & \mathbf {z}^{(i)} & \cdots & \mathbf {z}^{(m)} \end{bmatrix}$
 
+$\mathbf{z} = \begin{bmatrix} (\mathbf {w}^T \mathbf {x}^{(1)} + b) & (\mathbf {w}^T \mathbf {x}^{(2)} + b) & \cdots & (\mathbf {w}^T \mathbf {x}^{(i)} + b)& \cdots (\mathbf {w}^T \mathbf {x}^{(m)} + b) \end{bmatrix}$
+
+$\mathbf{z} = \mathbf {w}^T \begin{bmatrix} \mathbf {x}^{(1)} & \mathbf {x}^{(2)} & \cdots & \mathbf {x}^{(i)} & \cdots & \mathbf {x}^{(m)} \end{bmatrix} + \begin{bmatrix} b & b & \cdots & b\end{bmatrix}$
+
+$ \mathbf{z}  = \mathbf {w}^T \mathbf {X} + \mathbf b $
+
+$\mathbf b$ will have $m$ elements
+
+The above equation can be implemented using `numpy` considering $b$ as real scalar number as it will be added to each element of $\mathbf z$ vector using `broadcasting` capability of `numpy`.
+
+```js
 def forward_linear(x, w, b):
   return np.dot(w.T, x) + b
 ```
-
 ## Forward Propogation - Activated Output
 
 In Logistic regression, instead of fitting a regression line, we fit an "S" shaped logistic function, which predicts values between 0 and 1. This process is the second part of forward propogation and called activation process. The output of this is called activated output represented by $a^{(i)}$. For one neuron problem, this is also the preducted value ($\hat{y}^{(i)}$) for the initialized parameters $w$ and $b$ for first iteration and then updated paratemetrs for the subsequent iterations.
@@ -204,7 +227,7 @@ In Logistic regression, instead of fitting a regression line, we fit an "S" shap
 $\hat{y}^{(i)} = a^{(i)} = \frac {1}{1+e^{-z^{(i)}}}$
 
 ```js
-def activation(z):
+def forward_activation(z):
   return 1/(1 + np.exp(-z))
 ```
 
@@ -232,41 +255,58 @@ $$J = -\frac{1}{m}\sum_{i=1}^{m}(y^{(i)}\log(a^{(i)})+(1-y^{(i)})\log(1-a^{(i)})
 def compute_cost(A, y_train):
   return np.squeeze(-np.sum((y_train*np.log(A)+(1-y_train)*np.log(1-A)),axis=1))
 ```
+<div class="note-box">
+The `np.sum` function sum all the elements of the matrix along the `axis` assigned in the function itself using `axis` arguement. `axis=0` refer to the sum along the $0^{th}$ axis and outputting the matrix of remaining shape. `keepdims` keyword arguement keep the dimension of the output matrix same as the origiginal matrix. Squeeze removes the dimensions of size 1, not the actual matrix structure.
+
+Following example will make it more clear:
+
+```js
+y_pred = np.array([[0.2, 0.4, 0.6, 0.3, 0.9]])
+y_truth = np.array([[0, 0, 1, 0, 1]])
+sum = np.sum(y_truth*np.log(y_pred)+(1-y_truth)*np.log(1-y_pred), axis=1)
+# sum = np.sum(y_truth*np.log(y_pred)+(1-y_truth)*np.log(1-y_pred), axis=1, keepdims=True)
+print(sum, sum.shape)
+squeezed = np.squeeze(sum)
+print(squeezed, squeezed.shape)
+```
+</div>
 
 The cost is to be minimized to obtain the optimum parameters using gradient descent. 
 
 ## Gradient Descent
 
-To understand the basics of the gradient descent, let us consider one training example and multiple features. Then we can write the forward propogation equations by dropping the superscript $i$:
+To understand the basics of the gradient descent, let us consider $i^{th}$ training example. Then we can write the forward propogation equations$:
 
-$z = w_1x_1+w_2x_2+.....+w_{nx}x_{nx}+b $
+$z^{(i)} = w_1x_1^{(i)}+w_2x_2^{(i)}+.....+w_{nx}x_{nx}^{(i)}+b $
 
-$a = \frac {1}{1+e^{-z}}$
+$a^{(i)} = \frac {1}{1+e^{-z^{(i)}}}$
 
-$L(a, y) =  - y \log(a) - (1-y) \log(1-a)$
+$L(a^{(i)}, y^{(i)}) =  - y ^{(i)}\log(a^{(i)}) - (1-y^{(i)}) \log(1-a^{(i)})$
 
-In gradient descent, the parameters are updated to find the global minimima using the garient of the loss function
+In gradient descent, the parameters are updated to find the global minimima using the gardient of the loss function
 
-$ \mathbf{w} = \mathbf{w} - \alpha \frac {\partial L}{\partial \mathbf{w}}$
+$ w_j = w_j - \alpha \frac {\partial L(a^{(i)}, y^{(i)})}{\partial w_j}$
 
-$ b = b - \alpha \frac {\partial L}{\partial b}$
+$ b = b - \alpha \frac {\partial L(a^{(i)}, y^{(i)})}{\partial b}$
 
 Where,  
  $ \alpha$ : Learning Rate (0.0001, 0.001, 0.01...)
+ 
+ subscript $j$ represnts the $j^{th}$ features
 
-To find the upated values of the parameters, we have to find the gradients (the subscript $j$ represnts the $j^{th}$ features)
+To find the upated values of the parameters, we have to find the gradients 
 
-$$ \frac{\partial L(a, y)}{\partial w_j} ; \frac{\partial L(a, y)}{\partial b} $$
+$$ \frac{\partial L(a^{(i)}, y^{(i)})}{\partial w_j} ; \frac{\partial L(a^{(i)}, y^{(i)})}{\partial b} $$
 
 The loss function is a function of $a$ and $y$, so we have to use chain rule going backward from the last step to first step.
 
 Note that $a$ is a function of $z$ and $z$ is a function of $w$.
 
-$$\frac{\partial L(a, y)}{\partial w_j}= \frac{\partial L(a, y)}{\partial a} . \frac{\partial a}{\partial z} . \frac{\partial z}{\partial w_j}$$
+$$\frac{\partial L(a^{(i)}, y^{(i)})}{\partial w_j}= \frac{\partial L(a^{(i)}, y^{(i)})}{\partial a^{(i)}} . \frac{\partial a^{(i)}}{\partial z^{(i)}} . \frac{\partial z^{(i)}}{\partial w_j}$$
 
 Let us try to evaluate the each term separately.
 
-$$\frac{\partial L(a, y)}{\partial a}=-\frac {y}{a}+\frac {(1-y)}{(1-a)}$$
+$$\frac{\partial L(a^{(i)}, y^{(i)})}{\partial a^{(i)}}=-\frac {y^{(i)}}{a^{(i)}}+\frac {(1-y^{(i)})}{(1-a^{(i)})}$$
 
 ```
 da = - (np.divide(y, a) - np.divide(1 - y, 1 - a))
@@ -275,14 +315,19 @@ da = - (np.divide(y, a) - np.divide(1 - y, 1 - a))
 Using
 
 $$y= \frac{u(x)}{v(x)}; \frac{\partial y} {\partial x}=\frac {vu'-uv'}{v^2}$$ 
-
+<div class="note-box">
 We evaluate
 
-$$ \frac{\partial a}{\partial z}=\frac{\partial }{\partial z} (\frac {1}{1+e^{-z}}) $$
-$$= \frac {e^{-z}}{(1+e^{-z})^2}$$
+$$ \frac{\partial a^{(i)}}{\partial z^{(i)}}=\frac{\partial }{\partial z^{(i)}} (\frac {1}{1+e^{-z^{(i)}}}) $$
+$$= \frac {e^{-z^{(i)}}}{(1+e^{-z^{(i)}})^2}$$
 
-$$ =\frac {1}{1+e^{-z}}\frac {1+e^{-z}-1}{1+e^{-z}}$$
-$$ =a(\frac {1+e^{-z}}{1+e^{-z}} - \frac {1}{1+e^{-z}})$$
+$$ =\frac {1}{1+e^{-z^{(i)}}}\frac {1+e^{-z^{(i)}}-1}{1+e^{-z^{(i)}}}$$
+
+$$ =a(\frac {1+e^{-z^{(i)}}}{1+e^{-^{(i)}}} - \frac {1}{1+e^{-z^{(i)}}})$$
+
+$$ =a^{(i)}(1 - a^{(i)})$$
+
+</div>
 
 The vectorized form
 
@@ -302,30 +347,20 @@ def backward_activation(z, da):
   return dz
 ```
 
-$$ \frac{\partial z}{\partial w_j}=x_j $$
+$$ \frac{\partial z^{(i)}}{\partial w_j}=x_j^{(i)} $$
 
-$$ \frac{\partial L(a, y)}{\partial w_j}= x_j(a-y) $$
+$$ \frac{\partial L(a^{(i)}, y^{(i)})}{\partial w_j}= x_j^{(i)}(a^{(i)}-y^{(i)}) $$
 
 Similarly,
 
-$$ \frac{\partial L(a, y)}{\partial b}= (a-y)$$
+$$ \frac{\partial L(a^{(i)}, y^{(i)})}{\partial b}= (a^{(i)}-y^{(i)})$$
 
 Let us expand the expressions for $m$ training examples by taking the mean of the sum over all the training examples
 
-$$ \frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1} ^m (a^{(i)}-y^{(i)}){x}^{(i)}_j$$
-
-$$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum _{i=1} ^m (a^{(i)}-y^{(i)})$$
-
-
-<div style="background-color:#20212b ; width: 100%; text-align: center;">
-  <img src="images/backward_linear.png" alt="Linear Part" width="600">
-</div>
-
-**Substituting**
 
 $$ \frac{\partial J}{\partial w_1} = \frac{1}{m} [({a}^{(1)}-y^{(1)}){x}^{(1)}_1 + ({a}^{(2)}-y^{(2)}){x}^{(2)}_1 + .... + ({a}^{(m)}-y^{(m)}){x}^{(m)}_1]$$
 
-$$ \frac{\partial J}{\partial w_1} = \frac{1}{m} [({a}^{(1)}-y^{(1)}){x}^{(1)}_2 + ({a}^{(2)}-y^{(2)}){x}^{(2)}_2 + .... + ({a}^{(m)}-y^{(m)}){x}^{(m)}_2]$$
+$$ \frac{\partial J}{\partial w_2} = \frac{1}{m} [({a}^{(1)}-y^{(1)}){x}^{(1)}_2 + ({a}^{(2)}-y^{(2)}){x}^{(2)}_2 + .... + ({a}^{(m)}-y^{(m)}){x}^{(m)}_2]$$
 
 ```js
 A = forward_linear(X_train, np.array([1.0, 1.0]), 0.0)
@@ -346,9 +381,9 @@ $ \frac{\partial J}{\partial w_1} = \frac{1}{m} \begin{pmatrix} {x}^{(1)}_1 & {x
 
 $ \frac{\partial J}{\partial w_2} = \frac{1}{m} \begin{pmatrix} {x}^{(1)}_2 & {x}^{(2)}_2 & \cdots &{x}^{(m)}_2 & \end{pmatrix}\begin{pmatrix} {a}^{(1)}-y^{(1)}\\ {a}^{(2)}-y^{(2)}\\ \vdots \\ {a}^{(m)}-y^{(m)} \end{pmatrix}$
 
-$ \frac{\partial J}{\partial w_1} = \frac{1}{m} \mathbf{x}_{1}(\mathbf{\hat {y}-y})^T$
+$ \frac{\partial J}{\partial w_1} = \frac{1}{m} \mathbf{x}_{1}(\mathbf{a-y})^T$
 
-$ \frac{\partial J}{\partial w_2} = \frac{1}{m} \mathbf{x}_{2}(\mathbf{\hat {y}-y})^T$
+$ \frac{\partial J}{\partial w_2} = \frac{1}{m} \mathbf{x}_{2}(\mathbf{a-y})^T$
 
 $ \frac {\partial J}{\partial \mathbf{w}} = \begin{pmatrix} \frac{\partial J}{\partial w_1} \\ \frac{\partial J}{\partial w_2} \end{pmatrix}$
 
@@ -360,8 +395,6 @@ $$ \frac{\partial J}{\partial \mathbf{w}} = \frac{1}{m}\mathbf {X(a-y)}^T = \fra
 $$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)}) =  \frac{1}{m} \sum_{i=1}^m  z^{(i)}$$
 
 ![Logistic Regression Model](images/backward.png)
-
-
 
 ```js
 def backward_linear(X, dz):
@@ -387,6 +420,7 @@ def update_parameters(w, b, dw, db, learning_rate = 0.002):
   b = b - learning_rate * db
   return w, b
 ```
+![Logistic Regression Model](images/training_model.png)
 
 ## Python implementation
 

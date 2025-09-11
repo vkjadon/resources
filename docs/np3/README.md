@@ -1,174 +1,285 @@
-## Binary Classification using Logistic Rgression - Dataset
+## Handling Image Data (3D Matrix)
 
-- Will use `kaggle` dataset of cat.
-- The dataset is in HDF5 (Hierarchical Data Format version 5) data format
-- [h5py Documentation Link](https://docs.h5py.org/en/stable/quick.html)
-- HDF5 format is designed for storing and managing large and complex datasets.
-- HDF5 provides a flexible and efficient way to organize, store, and retrieve data.
-- It supports various types of data, including numerical arrays, images, tables, and text.
-- The h5py package is a Pythonic interface to the HDF5 binary data format.
+## Create Image
 
-**Fetch Dataset from Kaggle**
-- Download the data from the link below:  
-  [Download Catvnocat Dataset](https://www.kaggle.com/datasets/muhammeddalkran/catvnoncat)
-- Extract the zip file and keep that in a folder.  
-- or, use the `kagglehub` code given on the link. The is as below
+Color images are represented by 3D array corresponding to pixels in height, pixels in width for each of RGB channel.
 
 ```js
-import kagglehub
-path = kagglehub.dataset_download("muhammeddalkran/catvnoncat")
-print("Path to dataset files:", path)
+randA=np.random.rand(64*64*3)*255
 ```
-This will output path variable as
 
-<pre>Path to dataset files: /kaggle/input/catvnoncat</pre>
-
-Check the list in the path using `!ls /kaggle/input/catvnoncat/`. You will see another folder names `catvnocat`. Chaeck the files inside this. Following two files are available:
-
-
-
-  *Details of datasets*
-  - Image size: 64x64
-  - Color space: RGB
-  - File format: h5
-  - Number of classes: 2 (cat, non-cat)
-  - Number of training images: 209
-  - Number of testing images: 50
-
-To represent color images, the red, green and blue channels (RGB) must be specified for each pixel, and so the pixel value is actually a vector of three numbers ranging from 0 to 255.
-
+reshape to a row or column matrix as below with three channels for RGB.  
 ```js
-import numpy as np
-import h5py
+#Use this for Tensor Flow
+image=randA.reshape(64,64,3)
+#Use this for OpenCV
+# image=randA.reshape(3,64,64)
+image = image.astype('uint8')
+```
+
+This represent an color image of $64 \times 64$ and is stored in array of size (64, 64, 3). The last 3 represent the R, G and B channels. If you observe the `Image` matrix, you can see there are three elements in one/inner array. There are 64 such lines of arrays. These 64 lines of arrays of 3 elemets are further appearing 64 times to complete the `Image` matrix. In `Deep Learning` applications handling images, we call each pixel values as features and need to be converted to a column vector.
+```js
+image
+```
+ndarray (64, 64, 3)  
+![  ](image-1.png)  
+array  
+([[[184,   2, 150],  
+        [204,  73, 162],  
+        [156,  68, 161],  
+        ...,  
+        [241, 227, 215],  
+        [216, 122, 170],  
+        [151,  40, 199]],  
+       [[ 58, 180, 172],  
+        [ 31, 192, 253],  
+        [167, 147, 121],  
+        ...,  
+        [108, 181, 103],  
+        [ 95, 113, 230],  
+        [136, 253,  91]],  
+         [[191, 128, 240],  
+        [ 82, 136, 152],  
+        [165, 169,  62],  
+        ...,  
+        [227, 235,  12],  
+        [211, 173, 134],  
+        [230, 180,  30]],  
+       ...,
+       [[ 10,  26, 143],  
+        [ 95, 186, 156],  
+        [ 48,  95, 173],  
+        ...,  
+        [ 26, 245,  75],  
+        [  3, 173, 244],  
+        [243, 109,  35]],  
+....  
+       [[201,  94,  63],  
+        [216, 120,  18],  
+        [132, 138,  12],  
+        ...,  
+        [150,  26, 141],  
+        [186,  77, 173],  
+        [ 16, 172, 178]],  
+...  
+       [[ 17,  56,  53],  
+        [129,   1,  89],  
+        [ 54, 136,  26],  
+        ...,  
+        [115,  50, 240],  
+        [ 42, 156,  51],  
+        [237,  39, 204]]],  
+         dtype=uint8)
+
+For (64, 64, 3) (channel-last format):
+
+Colab recognizes this as a typical RGB image format, assuming the first two dimensions represent the image's height and width. The third dimension represents the color channels.
+Since the data type is uint8 (a common type for image data with values from 0 to 255), Colab renders it as an image.
+
+For (3, 64, 64) (channel-first format):
+
+Colab doesn't recognize this shape as a standard image format. Instead it interprets the array as a generic 3D array and displays the raw data (a representation of the array values) rather than rendering it as an image. Colab does not assume that the first dimension represents channels.
+```js
+image[0][0].shape #Check shape
+```
+(3,)  
+```js
+image[0][0] #Check shape
+```
+array([224, 156, 168], dtype=uint8)
+```js
+image[0][0][0] #Check shape
+```
+184
+```js
+image.reshape(-1,1)
+```
+array  
+([[184],  
+       [  2],  
+       [150],  
+       ...,  
+       [237],  
+       [ 39],  
+       [204]],   dtype=uint8)  
+```js
+image.reshape(1,-1)
+```
+array([[184,   2, 150, ..., 237,  39, 204]], dtype=uint8)  
+```js
+image 
+```
+ndarray (64, 64, 3)  
+![  ](image-2.png)  
+array  
+([[[184,   2, 150],  
+        [204,  73, 162],  
+        [156,  68, 161],  
+        ...,  
+        [241, 227, 215],  
+        [216, 122, 170],  
+        [151,  40, 199]],  
+  ...  
+       [[ 58, 180, 172],  
+        [ 31, 192, 253],  
+        [167, 147, 121],  
+        ...,  
+        [108, 181, 103],  
+        [ 95, 113, 230],  
+        [136, 253,  91]],  
+  ... 
+       [[191, 128, 240],  
+        [ 82, 136, 152],  
+        [165, 169,  62],  
+        ...,  
+        [227, 235,  12],  
+        [211, 173, 134],  
+        [230, 180,  30]],  
+        ...,  
+        [[ 10,  26, 143],  
+        [ 95, 186, 156],  
+        [ 48,  95, 173],  
+        ...,  
+        [ 26, 245,  75],  
+        [  3, 173, 244],  
+        [243, 109,  35]],  
+...  
+       [[201,  94,  63],  
+        [216, 120,  18],  
+        [132, 138,  12],  
+        ...,  
+        [150,  26, 141],  
+        [186,  77, 173],  
+        [ 16, 172, 178]],  
+...  
+       [[ 17,  56,  53],  
+        [129,   1,  89],  
+        [ 54, 136,  26],  
+        ...,  
+        [115,  50, 240],  
+        [ 42, 156,  51],  
+        [237,  39, 204]]], dtype=uint8)  
+
+## Plot NumPy Array Image using Matplotlib
+```js
 import matplotlib.pyplot as plt
 ```
-
-## Load Dataset
-
 ```js
-train_dataset = h5py.File(f'{path}/catvnoncat/train_catvnoncat.h5', "r")
-test_dataset = h5py.File(f'{path}/catvnoncat/test_catvnoncat.h5', "r")
+imgplot = plt.imshow(image)
 ```
+![  ](image-3.png)
+In the above example, we created a dummy image but in deep learning we are given with the images and we may require to render these images. We can use PIL library to import the image. Let us first import an image into our session from button available at top left corner of the 'File/Folder' menu. This uploded image will be destroyed once we close the session.
 
- `h5py.File` acts like a Python dictionary, thus we can check the keys using `key()` method with list or `for loop`. [h5py Documentation Link](https://docs.h5py.org/en/stable/quick.html)
-
+## Convert Image Format into Numpy Array
 ```js
-print(f'Data Type {type(train_dataset)}')
-print(f'Keys : {train_dataset.keys()}')
-print(f'List containing keys only {list(train_dataset.keys())}')
-```
-```Output
-Data Type <class 'h5py._hl.files.File'>
-Keys : <KeysViewHDF5 ['list_classes', 'train_set_x', 'train_set_y']>
-List containing keys only ['list_classes', 'train_set_x', 'train_set_y']
-```
-Key values are the `Groups` like a folder in file syatem.The groups contain dataset as files in the folders. 
+from PIL import Image
 
+# Open the image using PIL
+image = Image.open('resize_test_1.png')
+
+# Convert the image to a NumPy array
+image_array = np.array(image)
+
+# Display the shape of the array
+print("Image array shape:", image_array.shape)
+
+imgplot = plt.imshow(image_array)
+```
+<pre style="background-color:#ffdddd; color:#b30000; padding:10px;">
+FileNotFoundError                         Traceback (most recent call last)
+<ipython-input-12-b82d58061b14> in <cell line: 4>()
+----> 4 image = Image.open('resize_test_1.png')
+
+FileNotFoundError: [Errno 2] No such file or directory: '/content/resize_test_1.png'
+</pre>
+
+We observe that the images have four channels instead of the expected three channels for RGB (Red, Green, Blue). The additional channel is typically an alpha channel, which represents transparency information.
+
+The presence of an alpha channel indicates that the image has an alpha transparency layer, commonly used in formats like PNG that support transparency. The alpha channel stores transparency information for each pixel, indicating how opaque or transparent the pixel should be when rendered.
+
+If we want to work with the RGB channels only, we can convert the image to RGB mode using the convert() function in PIL.
 ```js
-for key in train_dataset.keys():
-    print(train_dataset[key], type(train_dataset[key]))
-```
-```output
-<HDF5 dataset "list_classes": shape (2,), type "|S7"> <class 'h5py._hl.dataset.Dataset'>
-<HDF5 dataset "train_set_x": shape (209, 64, 64, 3), type "|u1"> <class 'h5py._hl.dataset.Dataset'>
-<HDF5 dataset "train_set_y": shape (209,), type "<i8"> <class 'h5py._hl.dataset.Dataset'>
-```
-The, `<class 'h5py._hl.dataset.Dataset'>` is not the data itself, but a handle (object) pointing to the dataset inside the HDF5 file. 
+# Convert the image to RGB mode
+image_rgb = image.convert('RGB')
 
+# Convert the image to a NumPy array
+image_array = np.array(image_rgb)
+
+# Display the shape of the array
+print("Image array shape:", image_array.shape)
+
+imgplot = plt.imshow(image_array)
+```
+Image array shape: (475, 200, 3)  
+![  ](image-4.png)  
 ```js
-print(type(train_dataset["train_set_y"]))
-list(train_dataset["train_set_y"])
+import cv2 as cv2
 ```
-The list looks like a Numpy array, but it is not. To actually use the values, you typically convert it into a NumPy array.
-
 ```js
-a=np.array(train_dataset["list_classes"])
-print(a, a.dtype)
+#Input the Resolution
+rows=int(input('Enter the Height of the Viewer Window: '))
+cols=int(input('\nEnter the Width of the Viewer Window: '))
 ```
-In NumPy, the `|S7` data type represents a fixed-length string of 7 characters. The S stands for string, and the number 7 indicates the length of the string. This data type is useful when you want to store and manipulate fixed-length strings in a NumPy array. Each element of the array will be a string of exactly 7 characters.
+Enter the Height of the Viewer Window: 64  
 
-If you want to store a string of 4 characters in a NumPy array with the |S7 data type, you can do so by using a fixed-length string of length 7, where the remaining 3 characters are filled with spaces.
-
-## Convert `h5py` Data into NumPy Data
-
+Enter the Width of the Viewer Window: 64  
 ```js
-#train set features
-train_set_x_orig = np.array(train_dataset["train_set_x"])
-
-#train set labels
-train_set_y = np.array(train_dataset["train_set_y"])
-
-print(type(train_set_x_orig), type(train_set_y))
-print(train_set_x_orig.dtype, train_set_y.dtype)
-
-print(train_set_x_orig.shape)
-print(train_set_y.shape)
-print(train_set_y[0])
-print(type(train_set_x_orig))
-
+#Input the R-G-B
+print('\n**Note: Please enter the brightness values between(0-255)**')
+red_value=int(input('\nEnter the Brightness Value of RED Channel: '))
+green_value=int(input('\nEnter the Brightness Value of GREEN Channel: '))
+blue_value=int(input('\nEnter the Brightness Value of BLUE Channel: '))
 ```
-Shape of the feature matrix (`train_set_x_orig`) is **(209, 64, 64, 3)** and the shape of output label matrix (`train_set_y`) is **(209,)**.
+**Note: Please enter the brightness values between(0-255)**
 
+Enter the Brightness Value of RED Channel: 50
+
+Enter the Brightness Value of GREEN Channel: 100
+
+Enter the Brightness Value of BLUE Channel: 150  
 ```js
-m_train=train_set_x_orig.shape[0]
-m_test=test_set_x_orig.shape[0]
-num_px=train_set_x_orig.shape[1]
-num_py=train_set_x_orig.shape[2]
-print ("Number of training examples: m_train = ", m_train)
-print ("Number of testing examples: m_test = ",m_test)
-print ("Size of image in pixels: num_px, num_py = " + str(num_px) + "," + str(num_py))
-```
-```output
-Number of training examples: m_train =  209
-Number of testing examples: m_test =  50
-Size of image in pixels: num_px, num_py = 64,64
-```
+#Matrix Generation of R-G-B
+red_channel = np.uint8(np.ones([rows,cols])*red_value)
+blue_channel = np.uint8(np.ones([rows,cols])*blue_value)
+green_channel = np.uint8(np.ones([rows,cols])*green_value)
 
-## Show cat image - MatPlotLib
-
+#Color Maker
+color = cv2.merge([red_channel,green_channel,blue_channel])
+plt.imshow(color)
+print(color.shape)
+```
+(64, 64, 3)  
+![alt text](image-5.png)  
 ```js
-index = 2
-plt.imshow(train_set_x_orig[index])
-```
-![Cat Image](images/image_index2.png)
-
-Chnage the index to show other images. You can also show the images in a grid
-
+from google.colab.patches import cv2_imshow
+# Display the image
+cv2_imshow(image)
+``` 
+![alt text](image-6.png)  
 ```js
-for i in range(16):
-  plt.subplot(4, 4, i+1)
-  plt.imshow(test_set_x_orig[i])
-  plt.axis('off')
+# Merge channels into an image
+image_bgr = cv2.merge((blue_channel, green_channel, red_channel))  # BGR format (OpenCV default)
+
+# Display with OpenCV (BGR format is correct here)
+cv2_imshow(image_bgr)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# If we display the same image in Matplotlib without conversion, colors will be incorrect
+plt.imshow(image_bgr)
+plt.title("Incorrect Display in Matplotlib")
+plt.show()
+
+# Convert BGR to RGB for correct Matplotlib display
+image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+
+# Correct display with Matplotlib
+plt.imshow(image_rgb)
+plt.title("Correct Display in Matplotlib")
+plt.show()
 ```
-This will show 16 images in 4 x 4 grid.
+![alt text](image-7.png)  
+![alt text](image-8.png)  
+![alt text](image-9.png)  
 
-![Cat Image](images/image_grid16.png)
 
-
-## Setting Data as per Matrix Notation
-Our formulation takes all features in a single column and the training examples are to be arranged in different column. This makes a matrix of rows equals number of features and columns equals number of training examples. 
-
-The shape of **`X`** matrix is $\mathcal {(nx, m)}$ where each columns represents the features of each training set; 
-
-Where,   
-
-$\mathcal {nx=px * py * 3}$ for the images as input and $m$ is the training examples.
-
-So, we have to reshape to `train_set_x_orig` to `(nx,m_train)`. This will be achieved in two steps:   
-
-***Step-1*** : Respahe `train_set_x_orig` to `(train_set_x_orig.shape[0],-1)`. -1 is used for unknown number of columns (known presently as `nx`)   
-***Step-2*** : Transpose the matrix to get the desired dimension `(nx, m)`.
-
-```js
-train_set_x_flatten=train_set_x_orig.reshape(train_set_x_orig.shape[0],-1).T
-test_set_x_flatten=test_set_x_orig.reshape (test_set_x_orig.shape[0],-1).T
-```
-
-Optimizing the parameters is best suited on the data of the same range. Let's normalize our dataset with the maximum possible pixel value i.e. 255.
-
-```js
-x_train = train_set_x_flatten / 255.
-y_train=train_set_y
-x_test = test_set_x_flatten / 255.
-y_train.shape
-```

@@ -111,8 +111,13 @@ $\hat{y}^{(4)} = w_1x^{(4)}_1+w_2x^{(4)}_2+b = \mathbf {w}^T \mathbf {x}^{(4)} +
 
 $\hat{y}^{(5)} = w_1x^{(5)}_1+w_2x^{(5)}_2+b = \mathbf {w}^T \mathbf {x}^{(5)} + b $
 
+We can define the predicted values or linear output of the samples as per convention as:
 
-$\mathbf{\hat{y}} = \mathbf {w}^T \mathbf {X} + b $
+$\mathbf{\hat{y}} = \begin{bmatrix} (\mathbf {w}^T \mathbf {x}^{(1)} + b) & (\mathbf {w}^T \mathbf {x}^{(2)} + b) & (\mathbf {w}^T \mathbf {x}^{(3)} + b) & (\mathbf {w}^T \mathbf {x}^{(4)} + b)& (\mathbf {w}^T \mathbf {x}^{(5)} + b) \end{bmatrix}$
+
+$\mathbf{\hat{y}} = \mathbf {w}^T \begin{bmatrix} \mathbf {x}^{(1)} & \mathbf {x}^{(2)} & \mathbf {x}^{(3)} & \mathbf {x}^{(4)} & \mathbf {x}^{(5)} \end{bmatrix} + b$
+
+$ \mathbf{\hat{y}}  = \mathbf {w}^T \mathbf {X} + b $
 
 
 **Data substitution**
