@@ -352,7 +352,9 @@ plt.xlabel("Value")
 plt.ylabel("Density")
 plt.show()
 ```
+
 ![alt text](images/image.png)
+
 ```js
 array=np.random.randn(30,40)
 # print(array)

@@ -72,7 +72,9 @@ plt.ylabel('sigmoid(z)')
 plt.grid(True)
 plt.show()
 ```
-![alt text](images/image-10.png)  
+
+![alt text](images/image_10.png)  
+
 In this code, we define the sigmoid function that calculates the sigmoid activation using the formula 1 / (1 + np.exp(-x)). The np.linspace() function generates 100 equally spaced values between -10 and 10 as the x values. We then compute the sigmoid function values for each x value using sigmoid(x).
 
 Finally, we use plt.plot() to plot the x values against the sigmoid function values (y). The remaining lines of code add a title to the plot, label the x and y axes, enable the grid, and display the plot using plt.show().

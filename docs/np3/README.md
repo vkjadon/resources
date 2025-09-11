@@ -22,7 +22,9 @@ This represent an color image of $64 \times 64$ and is stored in array of size (
 image
 ```
 ndarray (64, 64, 3)  
-![  ](image-1.png)  
+
+![Image  ](images/image-1.png) 
+
 array  
 ([[[184,   2, 150],  
         [204,  73, 162],  
@@ -109,8 +111,10 @@ array([[184,   2, 150, ..., 237,  39, 204]], dtype=uint8)
 ```js
 image 
 ```
-ndarray (64, 64, 3)  
-![  ](image-2.png)  
+ndarray (64, 64, 3)
+
+![  ](images/image-2.png)  
+
 array  
 ([[[184,   2, 150],  
         [204,  73, 162],  
@@ -167,7 +171,9 @@ import matplotlib.pyplot as plt
 ```js
 imgplot = plt.imshow(image)
 ```
-![  ](image-3.png)
+
+![ inmage ](images/image-3.png)
+
 In the above example, we created a dummy image but in deep learning we are given with the images and we may require to render these images. We can use PIL library to import the image. Let us first import an image into our session from button available at top left corner of the 'File/Folder' menu. This uploded image will be destroyed once we close the session.
 
 ## Convert Image Format into Numpy Array
@@ -211,7 +217,7 @@ print("Image array shape:", image_array.shape)
 imgplot = plt.imshow(image_array)
 ```
 Image array shape: (475, 200, 3)  
-![  ](image-4.png)  
+![  ](images/image-4.png)  
 ```js
 import cv2 as cv2
 ```
@@ -249,13 +255,13 @@ plt.imshow(color)
 print(color.shape)
 ```
 (64, 64, 3)  
-![alt text](image-5.png)  
+![alt text](images/image-5.png)  
 ```js
 from google.colab.patches import cv2_imshow
 # Display the image
 cv2_imshow(image)
 ``` 
-![alt text](image-6.png)  
+![alt text](images/image-6.png)  
 ```js
 # Merge channels into an image
 image_bgr = cv2.merge((blue_channel, green_channel, red_channel))  # BGR format (OpenCV default)
