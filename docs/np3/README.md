@@ -278,8 +278,8 @@ plt.imshow(image_rgb)
 plt.title("Correct Display in Matplotlib")
 plt.show()
 ```
-![alt text](image-7.png)  
-![alt text](image-8.png)  
-![alt text](image-9.png)  
+![alt text](images/image-7.png)  
+![alt text](images/image-8.png)  
+![alt text](images/image-9.png)  
 
 

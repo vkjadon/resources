@@ -72,7 +72,7 @@ plt.ylabel('sigmoid(z)')
 plt.grid(True)
 plt.show()
 ```
-![alt text](image-10.png)  
+![alt text](images/image-10.png)  
 In this code, we define the sigmoid function that calculates the sigmoid activation using the formula 1 / (1 + np.exp(-x)). The np.linspace() function generates 100 equally spaced values between -10 and 10 as the x values. We then compute the sigmoid function values for each x value using sigmoid(x).
 
 Finally, we use plt.plot() to plot the x values against the sigmoid function values (y). The remaining lines of code add a title to the plot, label the x and y axes, enable the grid, and display the plot using plt.show().
@@ -95,7 +95,7 @@ def plot(x,y):
   ```js
 plot(z,a)
 ```
-![alt text](image-11.png)  
+![alt text](images/image-11.png)  
 
 Implement the following equation
 
@@ -143,7 +143,7 @@ a = relu(z)
 # Plot the ReLU function
 plot(z,a)
 ```
-![alt text](image-12.png)  
+![alt text](images/image-12.png)  
 
 # Softmax
 
@@ -222,7 +222,7 @@ plot(a,y)
  4.44745056e-02 5.44311347e-02 6.66167816e-02 8.15304625e-02  
  9.97829100e-02 1.22121583e-01 1.49461275e-01 1.82921579e-01]  
  
-![alt text](image-13.png)  
+![alt text](images/image-13.png)  
 
 # Mean Squared Error (MSE) Loss Function
 
@@ -276,7 +276,7 @@ plt.ylabel('Loss')
 plt.grid(True)
 plt.show()
 ```
-![alt text](image-14.png)  
+![alt text](images/image-14.png)  
 
 - [...]: This is a list comprehension, which is a concise way to create a new list by iterating over a sequence (in this case, the y_pred values) and performing a specific operation for each element.
 
@@ -321,7 +321,7 @@ plt.ylabel('Loss')
 plt.grid(True)
 plt.show()
 ```
-![alt text](image-15.png)  
+![alt text](images/image-15.png)  
 
 # Categorical Cross-Entropy Loss Function
 
@@ -365,7 +365,7 @@ plt.grid(True)
 
 plt.show()
 ```
-![alt text](image-16.png)  
+![alt text](images/image-16.png)  
 
 # Linear Algebra Functions
 # Normalization
