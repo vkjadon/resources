@@ -1,17 +1,14 @@
 ## Binary Classification using Logistic Rgression - Dataset
 
-- Open a New Notebook on Google Colab or you can clone a 
-
-```
-git clone https://github.com/vkjadon/deep_learning/
-```
-
-Use dl_01_lr_single_neuron.ipynb
-
-Clone the following github repository and follow along. 
+- Open a New Notebook on Google Colab
+- Clone the following github repository and follow along. 
 
 ```py
-# Cleaning up variables to prevent loading data multiple times (which may cause memory issue)
+! git clone https://github.com/vkjadon/utils/
+```
+
+```js
+# Cleaning up variables to prevent loading data multiple times
 try:
   for var in dir():
     if not var.startswith("_"):
@@ -19,7 +16,6 @@ try:
       print(f'Clearing {var}.')
 except:
   pass
-! git clone https://github.com/vkjadon/utils/
 ```
 
 Run the cell to import necessary modules
