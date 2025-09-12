@@ -405,6 +405,12 @@ def backward_linear(X, dz):
 
   return dw, db
 ```
+
+<div class="note-box">
+<b>np.sum</b> by itself will return a result in the default NumPy data type of the input array which is usually 'float32' if the inputs are 'float32'. You are forcing the result to use 64-bit floating-point precision during the summation, even if dz is float32. 
+Summing many small 'float32' values can accumulate rounding error which matters especially when the sample size is large. It is also important to note that the 'dw' is computed with 'np.dot', which already promotes to a high-precision type when one of the inputs is float64.
+</div>
+
 $ \mathbf{w} = \mathbf{w} - \alpha \frac {\partial J}{\partial \mathbf{w}}$
 
 $ b = b - \alpha \frac {\partial J}{\partial b}$
@@ -423,6 +429,34 @@ def update_parameters(w, b, dw, db, learning_rate = 0.002):
 ![Logistic Regression Model](images/training_model.png)
 
 ## Python implementation
+
+Now, we are ready to combine everything as per the block diagram shown above. Starting our training with the initialization of the parameters, followed by looping over forawrd and backward steps to update the parameters.
+
+Let us rewrite the code for preparing our sample data
+
+```js
+X_dataset, y_dataset = make_classification(
+    n_samples=500,
+    n_features=2,
+    n_informative=2,
+    n_redundant=0,
+    n_classes=2,
+    n_clusters_per_class=1,
+    random_state=4)
+
+training_x, testing_x, training_y, testing_y = train_test_split(X_dataset, y_dataset, train_size=0.8, test_size=0.2, random_state=1)
+
+m_train=training_x.shape[0]
+m_test=testing_x.shape[0]
+nx = training_x.shape[1]
+
+X_train = training_x.T
+X_test = testing_x.T
+
+y_train = training_y.reshape(1, m_train)
+y_test = testing_y.reshape(1, m_test)
+```
+Before 
 
 ```js
 learning_rate=0.05
