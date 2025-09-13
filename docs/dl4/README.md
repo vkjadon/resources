@@ -337,13 +337,11 @@ $$ \frac{\partial \mathbf a}{\partial \mathbf z}=\mathbf a(1- \mathbf a)$$
   <img src="images/backward_activation.png" alt="Linear Part" width="500">
 </div>
 
-```py
+```js
 def backward_activation(z, da):
-
   s = 1/(1+np.exp(-z))
   ds_da = s * (1 - s)
   dz = da * ds_da
-
   return dz
 ```
 
@@ -398,11 +396,9 @@ $$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)}) = 
 
 ```js
 def backward_linear(X, dz):
-
   m = X.shape[1]
   dw = np.dot(X, dz.T)/m
   db = np.sum((dz), dtype=np.float64, axis=1)/m
-
   return dw, db
 ```
 

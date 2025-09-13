@@ -116,51 +116,76 @@ You can check the details about `callable` and `getattr` by using `help()` funct
 
 A lambda function, also known as an anonymous function, is a small and concise function in Python that doesn't require a defined name. It is defined using the lambda keyword, followed by the function arguements, a colon (:), and the expression to be evaluated.
 
-Here are a few examples to illustrate the usage of lambda functions:
+
+```
+  `lambda` args : expression
+```
+
+A lambda function can be as simple as `lambda: 67` which always returns 67 or with only one arguement `lambda x: x * x ` to square a number or with two arguements `lambda a, b: a + b` to add two numbers.
+
+It is optional to give name to lambda functions. We can use these as Immediately Invoked Function Expression (IIFE).  We can wrap lambda within parenthesis to act as function name and pass the arguements as below.
 
 ```js
-def add(a,b):
-  return a+b
-sum=add(10,17)
-print(sum)
+(lambda a, b: a + b)(1,2)
 ```
+
+The expression (lambda a, b: a + b)(1, 2) creates an anonymous function that takes two arguments a and b and returns their sum. The function is then immediately invoked with the arguments 1 and 2.
+
+Optionally, we can assign name to the function as below:
+
 ```js
 add = lambda a, b: a + b
 ```
+
 This will create a function with name as 'add' with two parameters 'a' and 'b' and capable of performing the 'a+b' operation.
 
 ```js
 result = add(3, 4)
 print(result)  
 ```
+
 ```js
 square = lambda x: x ** 2
 result = square(5)
 print(result)
 ```
-It is not necessary to write the name of the function to pass the arguement. Rather, we can use right hand side with lambda keyword enclosed within parenthesis to act as function name and pass the arguements as below.
+We have to be very specific about writting expression. If Python can evaluate it to a value in one go (without return, for statements, etc.), it qualifies as an expression—and that’s exactly what a lambda needs.
 
 ```js
-(lambda a, b: a + b)(1,2)
+result = lambda score: "Pass" if score >= 50 else "Fail"
+result(30)
 ```
-The expression (lambda a, b: a + b)(1, 2) represents an Immediately Invoked Function Expression (IIFE) in Python. It creates an anonymous function that takes two arguments a and b and returns their sum. The function is then immediately invoked with the arguments 1 and 2.
+In this Python will return only "Pass" or "Fail" based on the score
+
+We can also use other functions and methods in expression which directly producing the output such as `max`, `sum` etc. You should execute the below functions one at a time.
+
+```js
+s = "Vijay Online"
+upper = lambda s: s.upper()   
+print(upper(s))
+
+n = -9.02                
+ab = lambda n: abs(n)   # Give name as abs and check
+print(ab(n))
+
+x = 139.45622                   
+rnd = lambda x: round(x, 2)       
+print(rnd(x))
+
+nums = [1.5, 2.5, 3.5]      
+print((lambda nums: sum(nums) / len(nums))(nums))
+
+y = 10
+print((lambda y: [i*i for i in range(y)])(10))
+```
 
 ```js
 import numpy as np
 
-relu = lambda x: np.maximum(0, x)
-
 x = np.array([-2, -1, 0, 1, 2])
+relu = lambda x: np.maximum(0, x)
 print("ReLU Output:", relu(x))
 ```
-
-```js
-losses = [("modelA", 0.32), ("modelB", 0.28), ("modelC", 0.45)]
-
-sorted_losses = sorted(losses, key=lambda x: x[1])
-print("Sorted Models:", sorted_losses)
-```
-The key function is applied to each element of the dictionary to decide the sorting order.
 
 ### Keyword Arguements
 
@@ -185,6 +210,39 @@ expression = lambda a, b, c=8 : a * (b + c)
 result = expression(3, 10)
 print(result)
 ```
+### Practice Problems
+
+<div class="note-box">
+  Write a Lambda to reverse a string "Vijay Online".
+</div>
+
+<div class="note-box">
+  Given a number = 10071967. Write a Lambda to return sum of digits of the number.
+</div>
+
+<div class="note-box">
+  Write a Lambda function to count vowels in a string "Vijay Online".
+</div>
+
+<div class="note-box">
+  A store gives a flat 10% discount if the bill amount is more than ₹1000, otherwise no discount. Write a lambda that takes the bill amount and returns the final amount.
+</div>
+
+<div class="note-box">
+  Given an age, write a lambda that returns True if the person is a teenager (13 - 19 inclusive), otherwise False.
+</div>
+
+<div class="note-box">
+  A farmer has rectangular plots. Each plot is given as a tuple (length, width). Write a lambda to find the plot with the largest area from a list of plots. Hint : you can use 'max' function. You may assume plots = [(1,2), (3, 6), (5, 2)].
+</div>
+
+<div class="note-box">
+  Write a lambda that returns a grade given a score according to the list: [90+ : "A"; 75-89 : "B"; 50-74 : "C"; below 50 : "F"].
+</div>
+
+<div class="note-box">
+  Write a Python Lambda function that takes a list of numerical scores and determines the pass/fail status for each score in a single line of code. A score is considered a Pass if it is greater than or equal to 50, and Fail otherwise. It should output a list of "Pass" or "Fail" strings.
+</div>
 
 ## Comprehensions in Python
 
@@ -443,6 +501,14 @@ sorted_data = sorted(data, key=lambda x: x[0])
 print(sorted_data)
 help(sorted)
 ```
+
+```js
+losses = [("modelA", 0.32), ("modelB", 0.28), ("modelC", 0.45)]
+sorted_losses = sorted(losses, key=lambda x: x[1])
+print("Sorted Models:", sorted_losses)
+```
+The key function is applied to each element of the dictionary to decide the sorting order.
+
 ## * Operator
 
 ### Unpacking Operator *

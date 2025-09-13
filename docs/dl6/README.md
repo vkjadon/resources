@@ -150,9 +150,41 @@ print (f"Size of image in pixels: {num_px} x {num_py}")
 You should reshape `train_set_x_orig` to `(nx,m_train)` and `train_set_y_orig` to `(1, m_train)` if they are not as per our convention.
 
 ```js
-train_set_x=train_set_x_orig.reshape(-1, m_train)
+train_set_x=train_set_x_orig.reshape(m_train, -1).T
 train_set_y = train_set_y_orig.reshape((1, m_train))
+# train_set_x=train_set_x_orig.reshape(-1, m_train)
 ```
+<div class="note-box">
+
+<b>Reshaping</b>
+
+We can reshape the array using the reshape() function in NumPy. Reshaping allows you to change the shape or dimensions of an array while maintaining the same number of elements. Otherwise, it will throw an error.
+
+We can specify one dimension by '-1' for the unknown shape. The Numpy will compute that on its own if exists.
+
+Let us take a simple example of a dummy sample three (m = 3) color (RGB) images of 2 pixels (nx = 8).
+
+```js
+train_x = np.random.randint(0, 255, size= (3, 2, 2, 2))
+print(train_x)
+```
+
+Let us try to convert this matrix in the shape of (8, 3) i.e. (nx, m) .
+
+```js
+train_set = train_x.reshape(3, -1).T
+print(train_set)
+```
+
+The code below will also reshape the matrix in a shape of (8,3).
+
+```js
+train_set = train_x.reshape(-1, 3)
+print(train_set)
+```
+
+You will find that both the output has different arrangements of the elements. This is because of in first case the reshape (before transpose) will flatten three rows of inner eight elements along rows and then transpose into $8 \times 3$ shpae. Whereas, in the second case, it will create eight rows taking inner three elemnts row wise.
+</div>
 
 To represent color images, the red, green and blue channels (RGB) must be specified for each pixel, and so the pixel value is actually a vector of three numbers ranging from 0 to 255.
 
@@ -173,7 +205,7 @@ input_data_test(X_train, y_train, m_train, nx)
 
 Before going into the details of forward prpogation, we have to first initialize the weights and biases. 
 
-```py
+```js
 def initialize_with_zeros(features):
     """
     This function creates a vector of zeros of shape (features, 1) for w and initializes b to 0.
@@ -194,7 +226,7 @@ def initialize_with_zeros(features):
 
 Check with the following test
 
-```py
+```js
 initialize_with_zeros_test(initialize_with_zeros)
 ```
 
@@ -211,7 +243,7 @@ $\mathbf{z} = \mathbf{w}^T \mathbf{X} + b$
   <img src="images/forward_linear.png" alt="Linear Part" width="300">
 </div>
 
-```py
+```js
 def forward_linear(X, w, b):
   """
     Compute the linear output z
@@ -357,7 +389,7 @@ The vectorized form
 
 $ \frac{\partial \mathbf a}{\partial \mathbf z}=\mathbf a(1- \mathbf a)$
 
-```py
+```js
 def backward_activation(z, da):
   """
     Compute the (dJ/dz)
@@ -372,17 +404,14 @@ def backward_activation(z, da):
   """
 
   s = 1/(1+np.exp(-z))
-
   ds_da = s * (1 - s)
-
   dz = da * ds_da
-
   return dz
 ```
 
 Compute $ \partial J/\partial z$
 
-```py
+```js
 dz = backward_activation(z, da)
 ```
 
@@ -397,7 +426,7 @@ $$ \frac{\partial J}{\partial \mathbf{w}} = \frac{1}{m}\mathbf {X(a-y)}^T = \fra
 
 $$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)}) = \frac{1}{m} \sum_{i=1}^m (dz^{(i)})$$
 
-```py
+```js
 def backward_linear(X, dz):
   """
     Compute the (dJ/dw, dJ/db)
@@ -425,7 +454,8 @@ Check the function using the following
 ```js
 backward_prop_test(backward_prop)
 ```
-```py
+
+```js
 dw, db = backward_linear(X_train, dz)
 ```
 
@@ -475,12 +505,10 @@ plt.show()
 
 ```js
 A_pred = forward_activation(forward_linear(X_train, w, b))
-
 y_pred = np.array([1 if pred > 0.5 else 0 for pred in A_pred[0]]).reshape(1, m_train)
-
 print((np.sum(y_pred == y_train))/m_train)
 ```
-> 0.6555023923444976
+> 0.6505023923444976
 
 ## Test Accuracy
 
@@ -496,9 +524,7 @@ y_test=test_set_y
 
 ```js
 A_pred = forward_activation(forward_linear(X_test, w, b))
-
 y_pred = np.array([1 if pred > 0.5 else 0 for pred in A_pred[0]]).reshape(1, m_test)
-
 print((np.sum(y_pred == y_test))/m_test)
 ```
 > 0.34
