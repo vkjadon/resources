@@ -121,6 +121,9 @@ A lambda function, also known as an anonymous function, is a small and concise f
   `lambda` args : expression
 ```
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/xdwNbL1tysg?si=r8iCxPJ2ri_As9-W" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+
 A lambda function can be as simple as `lambda: 67` which always returns 67 or with only one arguement `lambda x: x * x ` to square a number or with two arguements `lambda a, b: a + b` to add two numbers.
 
 It is optional to give name to lambda functions. We can use these as Immediately Invoked Function Expression (IIFE).  We can wrap lambda within parenthesis to act as function name and pass the arguements as below.
