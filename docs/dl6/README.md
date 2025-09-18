@@ -184,6 +184,13 @@ print(train_set)
 ```
 
 You will find that both the output has different arrangements of the elements. This is because of in first case the reshape (before transpose) will flatten three rows of inner eight elements along rows and then transpose into $8 \times 3$ shpae. Whereas, in the second case, it will create eight rows taking inner three elemnts row wise.
+
+We can also get the same result using `flatten()` function which create 1D array starting from the element of innermost axis.
+
+```js
+flattened = np.array([img.flatten() for img in train_x]).T
+```
+It works on the innermost axis (axis 3) first and convert all elements into 1D array of that axis followed by adding elements of next outer axis (axis 2) into the 1D array. This will be there till axis 0 (outer most axis). But, in this case, we are implementing `flatten()` on one image at a time using `for` loop. So, this code will create a 2D array of size $m \times nx$
 </div>
 
 To represent color images, the red, green and blue channels (RGB) must be specified for each pixel, and so the pixel value is actually a vector of three numbers ranging from 0 to 255.
@@ -529,7 +536,38 @@ print((np.sum(y_pred == y_test))/m_test)
 ```
 > 0.34
 
-This is the case of underfitting as the training accuracy is low because the model is too simple and the learning hasn’t converged. Test accuracy is much worse than training accuracy, which indicates poor generalization. It is not generalizing the learning on the test dataset. It can also be cosidered as high variance problem.
+This situation illustrates underfitting: the model is too simple to capture the underlying patterns, so training accuracy remains low and the learning process never truly converges. Such underfitting reflects a high-bias problem, where the model’s predictions consistently deviate from the true values observed in the training data.
+Bias arises when a model uses overly simplified assumptions to approximate the target function, making it easier to learn but less accurate.
+
+## Bias and Variances 
+
+Bias is the reducible error that can be addressed by improving the model or training process.
+
+Examples : Fitting a constant prdictor $\hat y = c $ to a linear data $y = 3x +2$ for a regression model. For images data, it is the habit of predicting one class into other class consistently. For example, in handwritten digit classification problem it may be due to the model classifying "3" as "8" most of the times. A pattern of systematic error.
+
+<div class="note-box">
+You can have underfitting without purely high bias. For example, if the model could fit but is poorly trained (too few epochs, overly strong regularization).
+
+You can have high bias without obvious underfitting on noisy data if the data themselves are simple enough that a biased model still achieves decent training accuracy.
+</div>
+
+Overfitting occurs when the model is too complex and captures not only the true relationship but also the random noise in the training data.
+
+This is reflected when training accuracy is very high, but performance on new or validation data is poor.
+
+Overfitting reflects a high-variance problem, where the model’s predictions fluctuate strongly with small changes in the training set. High variance means the model is overly sensitive to the specific data it sees.
+
+Variance measures how much the model’s predictions would change if we trained it on a different sample from the same distribution. 
+
+To summarize:
+
+Bias and Variance are the property of the learning model and property of the learning model and algorithm.
+
+You can have high variance without clear overfitting if you have a huge test set or heavy regularization that keeps validation error low despite model sensitivity.
+
+You can observe overfitting without high variance. For example, if the training data contain mislabeled points and the model classify them correctly.
+
+![Bias](images/bias.png)
 
 ## Cat Classifier Using `SKLearn`
 

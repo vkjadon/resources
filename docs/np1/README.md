@@ -153,7 +153,6 @@ Let us try to convert this matrix in the shape of (8, 3).
 train_set = train_x.reshape(3, -1).T
 print(train_set)
 ```
-
 The code below will also reshape the matrix in a shape of (8,3).
 
 ```js
@@ -162,6 +161,14 @@ print(train_set)
 ```
 
 You will find that both the output has different arrangements of the elements. This is because of in first case the reshape (before transpose) will flatten three rows of inner eight elements along rows and then transpose into $8 \times 3$ shpae. Whereas, in the second case, it will create eight rows taking inner three elemnts row wise.
+
+We can also get the same result using `flatten()` function which create 1D array starting from the element of innermost axis.
+
+```js
+flattened = np.array([img.flatten() for img in train_x]).T
+```
+It works on the innermost axis (axis 3) first and convert all elements into 1D array of that axis followed by adding elements of next outer axis (axis 2) into the 1D array. This will be there till axis 0 (outer most axis). But, in this case, we are implementing `flatten()` on one image at a time using `for` loop. So, this code will create a 2D array of size $m \times nx$
+
 
 ## Indexing Array Elements
 We can access arrays/elements of an array using indexing, just like in regular Python lists. For a 1D array first element is at index 0 and for 2D array first row at index `[0][]`, first column is at `[][0]` and first element is at index 0, 0 to specify row and column.

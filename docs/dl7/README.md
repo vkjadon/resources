@@ -114,22 +114,31 @@ We can consider input features as activation of zeroth layer.
 $\mathbf{x}^{(i)} = \begin{pmatrix} a_1 \\ a_2 \\ a_3 \end{pmatrix}^{[0](i)}$
 
 $\mathbf W^{[1]}.\text shape()=(n_L, n_{L-1})$
-  
+
+Let us define our network first with number of neurons in each layer.
 
 ```js
-def initialize_parameters(nx, nL, ny):
+network_layers = [nx, 4, 1]
+```  
+
+You are aware to begin the computation, you need to initialize the trainable parameters. The following function will take the `network_layes` as input to initialize the parameters of hidden and output layers. 
+
+```js
+def initialize_parameters(output_size, input_size, layer):
   random_state = 2
   rng = np.random.default_rng(random_state)
-  W1 = rng.standard_normal((nL, nx)) * 0.01
-  b1 = np.zeros((nL, 1))
-  W2 = rng.standard_normal((ny, nL)) * 0.01
-  b2 = np.zeros((ny, 1))
-  parameters = {"W1": W1,
-                "b1": b1,
-                "W2": W2,
-                "b2": b2}
+
+  W_matrix = rng.standard_normal((output_size, input_size)) * 0.01
+  b_array = np.zeros((output_size, 1))
+  
+  Weight  = "W" + str(layer)
+  bias  = "b" + str(layer)
+
+  parameters = {Weight : W_matrix, bias : b_array}
+  
   return parameters
 ```
+
 The vectorized equation of the forward linear coputation can be written as:  
 
 $\mathbf{z}^{[1] (i)} = \mathbf{W}^{[1]}\mathbf{x}^{(i)} + \mathbf{b}^{[1]}$ 

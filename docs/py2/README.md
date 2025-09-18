@@ -152,15 +152,7 @@ square = lambda x: x ** 2
 result = square(5)
 print(result)
 ```
-We have to be very specific about writting expression. If Python can evaluate it to a value in one go (without return, for statements, etc.), it qualifies as an expression—and that’s exactly what a lambda needs.
-
-```js
-result = lambda score: "Pass" if score >= 50 else "Fail"
-result(30)
-```
-In this Python will return only "Pass" or "Fail" based on the score
-
-We can also use other functions and methods in expression which directly producing the output such as `max`, `sum` etc. You should execute the below functions one at a time.
+We have to be very specific about writting expression. If Python can evaluate it to a value in one go (without return, for statements, etc.), it qualifies as an expression—and that’s exactly what a lambda needs. We can also use other functions and methods in expression which are directly producing the output such as `max`, `sum` etc. You should execute the below functions one at a time.
 
 ```js
 s = "Vijay Online"
@@ -182,12 +174,33 @@ y = 10
 print((lambda y: [i*i for i in range(y)])(10))
 ```
 
+Python’s lambda is limited to a single expression, but that expression can contain a conditional statement in the form of ternary or “inline if-else” operator. We can consider an example of checking whether a students is pass or fail based on its score in a subject. 
+
+```js
+result = lambda score: "Pass" if score >= 50 else "Fail"
+result(30)
+```
+In this Python will return only "Pass" or "Fail" based on the score
+
+Implimenting ReLU (Rectified Linear Unit) for a numpy array. ReLU function takes number and outputs maximum of 0 and the inputted number. $f(x) = max(0, x)$
+
 ```js
 import numpy as np
 
 x = np.array([-2, -1, 0, 1, 2])
-relu = lambda x: np.maximum(0, x)
+relu = lambda x : np.maximum(0, x)
 print("ReLU Output:", relu(x))
+
+```
+
+We also have `max` method in `Numpy` but that returns one value per axis, not elementwise comparison where as the `maximum` method returns an array of output of the ReLU function element wise.
+
+Another ways to implement ReLU are
+
+```js
+(lambda lst: [x if x > 0 else 0 for x in lst])([-2, -1, 0, 1, 2])
+(lambda lst: list(map(lambda x: x if x > 0 else 0, lst)))([-2, -1, 0, 1, 2])
+(lambda lst: list(map(lambda x: max(0, x), lst)))([-2, -1, 0, 1, 2])
 ```
 
 ### Keyword Arguements
@@ -336,6 +349,7 @@ for cls in unique_labels:
 
 ### Generator Expression
 Generator expressoin are handy especially when dealing with large datasets. You can load everything into memory rather than storing into memory.
+
 ```
 (expression for item in iterable if condition)
 ```
@@ -349,11 +363,45 @@ gen = (x*x for x in range(5))
 print(gen)
 print(next(gen))
 ```
+
+
 ```js
 for val in gen:
   print(val)
 ```
+
 After all values of the function are exhausted, its empty and can not be restarted. Saves memory (doesn't create the whole list in RAM). It is useful for streaming, large files, infinite sequences.
+
+A generator in Python is an iterator, so you can use any operation that works on iterators, like, 
+
+
+```js
+gen = (int(n) for i in str(n))
+
+sum(gen)       # add up all numbers
+max(gen)       # largest item
+min(gen)       # smallest item
+list(gen)      # convert to a list
+tuple(gen)     # convert to a tuple
+set(gen)       # convert to a set
+sorted(gen)    # return a sorted list
+any(gen)       # True if any element is truthy
+all(gen)       # True if all elements are truthy
+```
+
+If you run the above piece of code it will throw an error because the generator is exhausted once it is used in the `sum(gen)`. To see the working of the genertor in the different functions, you need to generator it again or generate in the function itself. So, the following syntax will work properly.
+
+```js
+print(sum((int(i) for i in str(n))))
+print(max((int(i) for i in str(n))))
+print(min((int(i) for i in str(n))))
+print(list((int(i) for i in str(n))))
+print(tuple((int(i) for i in str(n))))
+print(set((int(i) for i in str(n))))
+print(sorted((int(i) for i in str(n))))
+print(any((int(i) for i in str(n))))
+print(all((int(i) for i in str(n))))
+```
 
 ## Higher Order Function
 
