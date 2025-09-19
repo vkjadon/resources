@@ -114,6 +114,16 @@ We can consider input features as activation of zeroth layer.
 $\mathbf{x}^{(i)} = \begin{pmatrix} a_1 \\ a_2 \\ a_3 \end{pmatrix}^{[0](i)}$
 
 $\mathbf W^{[1]}.\text shape()=(n_L, n_{L-1})$
+<div style="position: relative; width: 100%; height: 0; padding-top: 56.2500%;
+ padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;
+ border-radius: 8px; will-change: transform;">
+  <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
+    src="https://www.canva.com/design/DAGy2kevHeY/bgd9XqOJipQFsKy0_hhq4g/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
+  </iframe>
+</div>
+
+<a href="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAGy2kevHeY&#x2F;bgd9XqOJipQFsKy0_hhq4g&#x2F;view?utm_content=DAGy2kevHeY&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link" target="_blank" rel="noopener">04-2L-Logistic Regression</a>
+
 
 Let us define our network first with number of neurons in each layer.
 
@@ -143,7 +153,21 @@ The vectorized equation of the forward linear coputation can be written as:
 
 $\mathbf{z}^{[1] (i)} = \mathbf{W}^{[1]}\mathbf{x}^{(i)} + \mathbf{b}^{[1]}$ 
 
-This can be implemented using `numpy dot()` as under using common variables:   
+## Forward Linear Computation : Layer - 2
+
+The layer - 2 in this case is the output layer, so the treatment given here for this layer will be used for output layer in deep networks
+
+**Node-1** : $[z^{[2](i)}_1]$  
+
+$ z^{[2] (i)} = w_{11}^{[2]}a^{[1] (i)}_1+w_{12}^{[2]}a^{[1] (i)}_2+w_{13}^{[2]}a^{[1] (i)}_3 + w_{14}^{[2]}a^{[1] (i)}_4 + b^{[2]}_1 $   
+
+$ z^{[2] (i)} = \mathbf{w}^{[2]T}\mathbf{a}^{[1] (i)} + b^{[2]} $  
+
+Note that $\mathbf w^{[2]}.shape=(4,1)$ but $W.shape=(n^{[l]}, n^{[l-1]})$. So, $W^{[2]}.shape=(1,4)$, this gives $W^{[2]}=\mathbf w^{[2]T}$  
+
+$\mathbf{z}^{[2] (i)} = \mathbf{W}^{[2]} \mathbf{a}^{[1] (i)} + \mathbf{b}^{[2]}$.   
+
+Now, you can implement these equations using `numpy dot()` as under using common variables:   
 
 ```js
 def forward_linear(A, W, b):
@@ -206,22 +230,6 @@ $\mathbf{a}^{[1](i)} = tanh(\mathbf{z}^{[1](i)})$.
 
 
 $\large \frac{\partial[tanh(z)]}{\partial z}=\small 1-[tanh(z)]^2$.  
-
-
-## Forward Linear Computation : Layer - 2
-
-The layer - 2 in this case is the output layer, so the treatment given here for this layer will be used for output layer in deep networks
-
-**Node-1** : $[z^{[2](i)}_1]$  
-
-$ z^{[2] (i)} = w_{11}^{[2]}a^{[1] (i)}_1+w_{12}^{[2]}a^{[1] (i)}_2+w_{13}^{[2]}a^{[1] (i)}_3 + w_{14}^{[2]}a^{[1] (i)}_4 + b^{[2]}_1 $   
-
-$ z^{[2] (i)} = \mathbf{w}^{[2]T}\mathbf{a}^{[1] (i)} + b^{[2]} $  
-
-Note that $\mathbf w^{[2]}.shape=(4,1)$ but $W.shape=(n^{[l]}, n^{[l-1]})$. So, $W^{[2]}.shape=(1,4)$, this gives $W^{[2]}=\mathbf w^{[2]T}$  
-
-$\mathbf{z}^{[2] (i)} = \mathbf{W}^{[2]} \mathbf{a}^{[1] (i)} + \mathbf{b}^{[2]}$.   
-
 
 
 ## Forward Activated Computation : Layer - 2
