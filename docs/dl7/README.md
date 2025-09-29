@@ -536,14 +536,102 @@ for i in range(max_iteration):
     print("The cost after ", i , " iteration.", cost[i])
 
 print("The cost after ", i , " iteration.", cost[i])
-```
 
-```js
 plt.plot(cost)
 plt.ylabel('cost')
 plt.xlabel('iterations')
 plt.title("Learning rate")
 plt.show()
+
+```
+
+## Backward Activation Function
+
+```js
+def backward_activation(dA, forward_activation_input, activation = "relu"):
+  """
+    Compute the activated output of z (sigmoid in this case)
+
+    Arguments:
+    z -- A 2D numpy array of any size [(1, m) in this case].
+
+    Return:
+    s -- sigmoid(z) of any size [(1, m) in this case].
+  """
+
+  if activation=='relu':
+    dAdZ = [1 if z > 0 else 0 for z in forward_activation_input]
+
+  elif activation=='sigmoid':
+    s = 1/(1 + np.exp(-forward_activation_input))
+    dAdZ = s * (1 - s)
+
+  elif activation == "tanh":
+    dAdZ = 1 - np.tanh(forward_activation_input) ** 2
+
+  dZ = dA * dAdZ
+
+  return dZ
+```
+
+### Checking
+
+```js
+dZ2 = A2 - y_train
+print(dZ2[0][:5])
+dZ2 = backward_activation(dAL, Z2, activation = "sigmoid")
+print(dZ2[0][:5])
+
+```
+
+## Backward Linear Function
+
+```js
+
+def backward_linear(dJdZ, previousLayerA, layerW):
+  """
+    Compute the activated output of z (sigmoid in this case)
+
+    Arguments:
+    z -- A 2D numpy array of any size [(1, m) in this case].
+
+    Return:
+    s -- sigmoid(z) of any size [(1, m) in this case].
+  """
+
+  m_train = dJdZ.shape[1]
+
+  dA = np.dot(layerW.T, dJdZ)
+  dW = (1 / m_train) * np.dot(dJdZ, previousLayerA.T)
+  db = (1 / m_train) * np.sum(dJdZ, axis=1, keepdims=True)
+
+  return dA, dW, db
+
+```
+### Checking 
+```js
+dW2 = (1 / m_train) * np.dot(dZ2, A1.T)
+db2 = (1 / m_train) * np.sum(dZ2, axis=1, keepdims=True)
+print(dW2[0][:5])
+dA1, dW2, db2 = backward_linear(dZ2, A1, parameters["W2"])
+print(dW2[0][:5])
+```
+### Hidden Layer
+
+```js
+dZ1 = np.multiply(np.dot(parameters["W2"].T, dZ2), 1 - np.power(A1, 2))
+print(dZ1[0][:5])
+dZ1 = backward_activation(dA1, Z1, activation = "tanh")
+print(dZ1[0][:5])
+```
+```js
+dW1 = (1 / m_train) * np.dot(dZ1, X_train.T)
+db1 = (1 / m_train) * np.sum(dZ1, axis=1, keepdims=True)
+print(dW1[0][:5])
+print(dW1.shape)
+dA, dW1, db1 = backward_linear(dZ1, X_train, parameters["W1"])
+print(dW1[0][:5])
+print(dW1.shape)
 ```
 
 ```js
