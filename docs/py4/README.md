@@ -450,6 +450,7 @@ class Dense(Layer):
     return np.dot(self.weights, self.input) + self.bias
 ```
 
+
 ## Polymorphism
 Polymorphism, an essential concept in OOP, allows the same interface to be used for different underlying forms (data types or objects). It can be categorized into two types: method overriding (runtime polymorphism) and operator overloading (compile-time polymorphism).
 

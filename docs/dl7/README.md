@@ -482,8 +482,8 @@ print(parameters["W2"], parameters["b2"])
 
 activations = ["tanh", "sigmoid"]
 
-learning_rate=0.005
-max_iteration=50
+learning_rate=0.01
+max_iteration=6000
 activation='tanh'
 np.random.seed(2)
 
@@ -532,7 +532,7 @@ for i in range(max_iteration):
   W2 = W2 - learning_rate * dW2
   b2 = b2 - learning_rate * db2
 
-  if i%200==0:
+  if i%100==0:
     print("The cost after ", i , " iteration.", cost[i])
 
 print("The cost after ", i , " iteration.", cost[i])
@@ -546,6 +546,75 @@ plt.title("Learning rate")
 plt.show()
 ```
 
+```js
+
+network_model = [nx, 4, 1]
+
+parameters = {}
+
+parameters["W1"], parameters["b1"] = initialize_parameters_2L(network_model[1], network_model[0], 1).values()
+parameters["W2"], parameters["b2"] = initialize_parameters_2L(network_model[2], network_model[1], 2).values()
+print(parameters["W2"], parameters["b2"])
+
+activations = ["tanh", "sigmoid"]
+
+learning_rate=0.01
+max_iteration=6000
+A0 = X_train
+
+# params = initialize_parameters(4,2,2)
+
+cost=np.zeros((max_iteration))
+
+for i in range(max_iteration):
+
+
+  #Forward Propagation
+  Z1 = forward_linear(A0, parameters["W1"], parameters["b1"])
+  A1 = forward_activation(Z1, activations[0])
+  Z2 = forward_linear(A1, parameters["W2"], parameters["b2"])
+  A2 = forward_activation(Z2, activations[1])
+
+  #Calculate Cost
+  cost[i] = - np.sum(np.multiply(np.log(A2), y_train) + np.multiply((1 - y_train), np.log(1 - A2))) / m_train
+
+  #Calculate Derivatives
+
+#Output Layer
+  dA2 = - (np.divide(y_train, A2) - np.divide(1 - y_train, 1 - A2))
+
+  # dZ2= A2 - y_train
+
+  dZ2 = backward_activation(dA2, Z2, activations[1])
+
+  dW2 = (1 / m_train) * np.dot(dZ2, A1.T)
+  db2 = (1 / m_train) * np.sum(dZ2, axis=1, keepdims=True)
+
+  dA1, dW2, db2 = backward_linear(dZ2, A1, parameters["W2"])
+
+  #Hidden Layer
+  
+  # dZ1 = np.multiply(np.dot(W2.T, dZ2), 1 - np.power(A1, 2))
+
+  dZ1 = backward_activation(dA1, Z1, activations[0])
+
+  dW1 = (1 / m_train) * np.dot(dZ1, X_train.T)
+  db1 = (1 / m_train) * np.sum(dZ1, axis=1, keepdims=True)
+
+  dA0, dW1, db1 = backward_linear(dZ1, X_train, parameters["W1"])
+ 
+  #Update Parameters
+
+  parameters["W1"] = parameters["W1"] - learning_rate * dW1
+  parameters["b1"] = parameters["b1"] - learning_rate * db1
+  parameters["W2"] = parameters["W2"] - learning_rate * dW2
+  parameters["b2"] = parameters["b2"] - learning_rate * db2
+
+  if i%100==0:
+    print("The cost after ", i , " iteration.", cost[i])
+# print("The cost after ", i , " iteration.", cost[i])
+
+```
 <div class="note-box">
 Alternatively, we can also deduce the above expressions for the linear output of hidden layer as below:
 
