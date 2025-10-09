@@ -102,7 +102,7 @@ DL1.input
 Now, you get `None` as it is not yet assigned any new data.
 
 
-### `forward` method
+### `forward` method : Dense Layer
 
  The `forward()` method takes *input* as the *arguement* and was initialized as `None`  in the `__init__()` method of the parent class.
 
@@ -121,6 +121,7 @@ Now, you get `None` as it is not yet assigned any new data.
   </div>
 </div>
 
+
 ```js
 class Dense(Layer):
   def __init__(self, input_size, output_size):
@@ -135,13 +136,16 @@ class Dense(Layer):
     return np.dot(self.weights, self.input) + self.bias
 
 ```
+
+To understand the above code with example, we shall take the example of `XOR` Truth Table. Let us introduce XOR table.
+
 ## Example : XOR (Exclusive OR) Truth Table
 
 The **XOR (Exclusive OR)** operation is a logical operation that outputs **true (1)** only when the inputs are **different**.  
 - If both inputs are the same (`0,0` or `1,1`), the output is **0**.  
 - If the inputs are different (`0,1` or `1,0`), the output is **1**.  
 
-## Truth Table
+### Truth Table
 
 | Input A | Input B | A ⊕ B (XOR) |
 |---------|---------|-------------|
@@ -151,6 +155,13 @@ The **XOR (Exclusive OR)** operation is a logical operation that outputs **true 
 |    1    |    1    |      0      |
 
  **XOR acts like a "difference detector"**: it gives `1` only when the inputs are different.
+
+If we treat inputs as data points in 2D space and you plot them, you will find the points with output 0 are diagonally opposite (bottom-left and top-right) whereas the points with output 1 are on the other diagonal (top-left and bottom-right).
+No single straight line can separate the 0’s from the 1’s. That means XOR is not linearly separable.
+
+A single-layer perceptron (linear classifier) can only draw one straight line to separate data classes. Since XOR requires at least two boundaries, a single-layer model cannot learn XOR — no matter how much it trains. Thats is why you may find this example at many places for basic understanding of the Deep Learning (multi layer models)
+
+The feature matrix would take the shape of (2, 4) as there are two input features and 4 datasets.
 
 ```js
 # XOR Table
@@ -165,6 +176,8 @@ DL3=Dense(2, 1)
 network = [DL1, DL2, DL3]
 ```
 
+You can implement the network using a for loop.
+
 ```js
 output = X
 for layer in network:
@@ -172,6 +185,9 @@ for layer in network:
 print(output)
 ```
 
+This way output of previous layer is feed forward as input to the current layer. It is also important to note that we are not storing output of the dense layer as instance variable as of now. We are only storing the input to the layer (passed as arguement during method call). 
+
+You can access the input to the layers using attribute access operator as below.
 
 ```js
 print(DL1.input)
@@ -181,7 +197,13 @@ print(DL3.output)
 print(output)
 ```
 
-You get three different sets of input representing $A^{[0]}, A^{[1]}, A^{[2]}, A^{[3]}$. The output of layer 3 (DL3) is none as we are not storing the layerwise output in the forward method of Dense Layer. But the when you print `output` you get a ventor representing the network output or the prediction. In case we need the layerwise output, we must store these in the forward method.
+You get three different sets of input representing $A^{[0]}, A^{[1]}, A^{[2]}, A^{[3]}.$ The output of layer 3 (DL3) is none as we are not storing the layerwise output in the forward method of Dense Layer. But the when you print `output` you get a vector representing the network output or the prediction. In case we need the output of each dense layer, we must store these in the forward method.
+
+![Neural Network](images/layer-3.png)
+
+Now, we know that the to complete the dense layer, we need to add backward method also. At the same time, to comlete the forward stage, all the layers need to be implemented. So, we will introduce activation forward first and then take up backward methods of both the layers.
+
+## Forward method : Activation Layer
 
 ```js
 class Sigmoid(Layer):
@@ -189,6 +211,7 @@ class Sigmoid(Layer):
     self.input = input
     return 1 / (1 + np.exp(-self.input))
 ```
+Now you can introduce activation layer in the network now. We use `sigmoid` activation at the output layer for binary classificaation.
 
 ```js
 AL3=Sigmoid()
@@ -198,6 +221,9 @@ for layer in network:
   output = layer.forward(output)
 print(output)
 ```
+
+The output of the network is the prediction on the model for the given model parameters. You can now add the other type of activation layers to implement different activation functions for the hidden layers.
+
 ```js
 class Tanh(Layer):
   def forward(self, input):
@@ -210,13 +236,32 @@ class ReLU(Layer):
     return np.maximum(0, self.input)
 ```
 
-### `backward` method
+Let us use `tanh` activation function in the hidden layers.
 
-The Dense Layer is also responsible for computing the gradient of the cost with respect to parameters ($\frac {d\mathbf J}{\mathbf W^{[l]}} and \frac {d\mathbf J}{\mathbf b^{[l]}}$) for given input of the layer in the backward step. The gradient of the cost with respect to the output ($\frac {d\mathbf J}{\mathbf Z^{[l]}}$) of the forward step of the Layer is the input to the Dense Layer as represented in the Figure. 
+```js
+AL1=Tanh()
+AL2=Tanh()
+AL3=Sigmoid()
+network = [DL1, AL1, DL2, AL2, DL3, AL3]
+output = X
+for layer in network:
+  output = layer.forward(output)
+print(output)
+```
 
-These are required to update the weights and biases for the gradient descent 
+## `backward` method : Dense Layer
 
-You also need to compute cost gradient with respect to input to the forward step ($\frac {d\mathbf J}{\mathbf A^{[l-1]}}$). It is passed to the previous layer.
+The Dense Layer is responsible for computing the gradient of the cost with respect to parameters ($\frac {d\mathbf J}{\mathbf W^{[l]}} and \frac {d\mathbf J}{\mathbf b^{[l]}}$) for given input of the layer in the backward step. 
+
+These are required to update the weights and biases for the gradient descent
+
+<div style="background-color:#20212b ; width: 100%; text-align: center;">
+  <img src="images/layer-4.png" alt="Linear Part" width="300">
+</div>
+
+ You also need to compute cost gradient with respect to input to the forward step ($\frac {d\mathbf J}{\mathbf A^{[l-1]}}$). It is passed to the previous layer.
+
+The gradient of the cost with respect to the output ($\frac {d\mathbf J}{\mathbf Z^{[l]}}$) of the forward step of the Layer is the input to the Dense Layer as represented in the Figure above. 
 
 <div class="note-box" align = "center">
 In summary, in Dense Layer, we need to compute 
@@ -228,20 +273,36 @@ In summary, in Dense Layer, we need to compute
     $$\frac {d\mathbf J}{\mathbf b^{[l]}}$$
   </div>
   <div>
-    $$\frac {d\mathbf J}{\mathbf a^{[l-1]}}$$
+    $$\frac {d\mathbf J}{\mathbf A^{[l-1]}}$$
   </div>
 </div>
-for given input to the Layer in Backward Step $$\frac {d\mathbf J}{\mathbf z^{[l]}}$$ (the cost gradient wrt the output of the Dense Layer)
+for given input to the Layer in Backward Step $$\frac {d\mathbf J}{\mathbf Z^{[l]}}$$ (the cost gradient wrt the output of the Dense Layer)
 
 </div>
 
 Let us compute these three gardients one by one:
 
-## Compute Output of the Layer $\frac {d \mathbf J}{d\mathbf a^{[l-1]}}$
+## Compute Output of the Layer $\frac {d \mathbf J}{d\mathbf A^{[l-1]}}$
 
-The given input vector to the layer is the gradient of the loss wrt the output of the forward step of the layer $\frac {d\mathbf J}{\mathbf z^{[l]}}$
+The given input vector to the layer is the gradient of the loss wrt the output of the forward step of the layer $\frac {d\mathbf J}{\mathbf Z^{[l]}}$
 
-$ d\mathbf a^{[l-1]}= \mathbf W^{[l]T} d\mathbf {z^{[l]}}$
+Let us do it for a single training example and will extend to $m$ training example. Also, we will drop superscript $(i)$ but will use lower cases whereever necessary to represent single training example.
+
+So, $\frac {d\mathbf L}{\mathbf z^{[l]}}$ is known to us and we need to compute $\frac {d \mathbf L}{d\mathbf a^{[l-1]}}$
+
+
+$$\frac {d L}{d\mathbf a^{[l-1]}} = \frac {d \mathbf L}{d\mathbf z^{[l]}} \frac {d \mathbf z^{[l]}}{d\mathbf a^{[l-1]}} $$
+
+$$\frac {d \mathbf L}{d\mathbf a^{[l-1]}} = \begin{pmatrix} \frac {dL}{da^{[l-1]}_1} \\ \frac {dL}{da^{[l-1]}_2} \\ \frac {dL}{da^{[l-1]}_3} \\ \frac {dL}{da^{[l-1]}_4} \end{pmatrix} = \begin{pmatrix} \frac {dL}{da^{[l-1]}_1} \\ \frac {dL}{da^{[l-1]}_2} \\ \frac {dL}{da^{[l-1]}_3} \\ \frac {dL}{da^{[l-1]}_4} \end{pmatrix} \begin{pmatrix} \frac {dz^{[l]}_1}{da^{[l-1]}_1} \\ \frac {dz^{[l]}_1}{da^{[l-1]}_1} \\ \frac {dz^{[l]}_1}{da^{[l-1]}_1} \\ \frac {dz^{[l]}_1}{da^{[l-1]}_1} \end{pmatrix}$$
+
+Sections below are to be updated ...
+
+$$\frac {d \mathbf z^{[l]}}{d\mathbf a^{[l-1]}} = \begin{pmatrix} \frac {dz^{[l]}_1}{da^{[l-1]}_1} \\ \frac {dz^{[l]}_1}{da^{[l-1]}_1} \\ \frac {dz^{[l]}_1}{da^{[l-1]}_1} \\ \frac {dz^{[l]}_1}{da^{[l-1]}_1} \end{pmatrix}$$
+
+$ z^{[l](i)}_1 = w_{11}^{[l]}a^{[l-1](i)}_1 + w_{12}^{[l]}a^{[l-1](i)}_2+ \cdots w_{1nx}^{[l]}a^{[l-1](i)}_{nx} + b^{[l]}_1 $   
+
+
+$ d\mathbf A^{[l-1]}= \mathbf W^{[l]T} d\mathbf {z^{[l]}}$
 
 $ d\mathbf W^{[l]}= \frac {1}{m} d\mathbf z^{[l]} \mathbf a^{[l-1]T}$
 
