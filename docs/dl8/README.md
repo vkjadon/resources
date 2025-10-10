@@ -248,6 +248,21 @@ for layer in network:
   output = layer.forward(output)
 print(output)
 ```
+## Loss Functions and Gradients
+
+```js
+def mse(y_true, y_pred):
+  return np.mean(np.power(y_true - y_pred, 2))
+
+def mse_prime(y_true, y_pred):
+  return 2 * (y_pred - y_true) / np.size(y_true)
+
+def binary_cross_entropy(y_true, y_pred):
+  return np.mean(-y_true * np.log(y_pred) - (1 - y_true) * np.log(1 - y_pred))
+
+def binary_cross_entropy_prime(y_true, y_pred):
+  return ((1 - y_true) / (1 - y_pred) - y_true / y_pred) / np.size(y_true)
+```
 
 ## `backward` method : Dense Layer
 
@@ -282,34 +297,95 @@ for given input to the Layer in Backward Step $$\frac {d\mathbf J}{\mathbf Z^{[l
 
 Let us compute these three gardients one by one:
 
-## Compute Output of the Layer $\frac {d \mathbf J}{d\mathbf A^{[l-1]}}$
+## Compute Output Gradient of the Layer $\frac {d \mathbf J}{d\mathbf A^{[l-1]}}$
 
-The given input vector to the layer is the gradient of the loss wrt the output of the forward step of the layer $\frac {d\mathbf J}{\mathbf Z^{[l]}}$
+The given input vector to the layer is the gradient of the cost wrt the output of the forward step of the layer $\frac {d\mathbf J}{\mathbf dZ^{[l]}}$
 
 Let us do it for a single training example and will extend to $m$ training example. Also, we will drop superscript $(i)$ but will use lower cases whereever necessary to represent single training example.
 
-So, $\frac {d\mathbf L}{\mathbf z^{[l]}}$ is known to us and we need to compute $\frac {d \mathbf L}{d\mathbf a^{[l-1]}}$
+So, $\frac {d\mathbf L}{\mathbf dz^{[l]}}$ is known to us and we need to compute $\frac {d \mathbf L}{d\mathbf a^{[l-1]}}$
 
 
-$$\frac {d L}{d\mathbf a^{[l-1]}} = \frac {d \mathbf L}{d\mathbf z^{[l]}} \frac {d \mathbf z^{[l]}}{d\mathbf a^{[l-1]}} $$
+$$\frac {d \mathbf L}{d\mathbf a^{[l-1]}} = \begin{pmatrix} \frac {dL}{da^{[l-1]}_1} \\ \frac {dL}{da^{[l-1]}_2} \\ \vdots \\ \frac {dL}{da^{[l-1]}_{nl-1}} \end{pmatrix} $$
 
-$$\frac {d \mathbf L}{d\mathbf a^{[l-1]}} = \begin{pmatrix} \frac {dL}{da^{[l-1]}_1} \\ \frac {dL}{da^{[l-1]}_2} \\ \frac {dL}{da^{[l-1]}_3} \\ \frac {dL}{da^{[l-1]}_4} \end{pmatrix} = \begin{pmatrix} \frac {dL}{da^{[l-1]}_1} \\ \frac {dL}{da^{[l-1]}_2} \\ \frac {dL}{da^{[l-1]}_3} \\ \frac {dL}{da^{[l-1]}_4} \end{pmatrix} \begin{pmatrix} \frac {dz^{[l]}_1}{da^{[l-1]}_1} \\ \frac {dz^{[l]}_1}{da^{[l-1]}_1} \\ \frac {dz^{[l]}_1}{da^{[l-1]}_1} \\ \frac {dz^{[l]}_1}{da^{[l-1]}_1} \end{pmatrix}$$
+As we know that loss is function of $\mathbf z^{[1]}, \mathbf z^{[2]}, .. \mathbf z^{[L]}$ but for gradient we are only concern about the  $\mathbf z^{[l]}$. All others would result to zero.
 
-Sections below are to be updated ...
+$L = f(\mathbf z^{[1]}, \mathbf z^{[2]}, .. \mathbf z^{[L]})$
 
-$$\frac {d \mathbf z^{[l]}}{d\mathbf a^{[l-1]}} = \begin{pmatrix} \frac {dz^{[l]}_1}{da^{[l-1]}_1} \\ \frac {dz^{[l]}_1}{da^{[l-1]}_1} \\ \frac {dz^{[l]}_1}{da^{[l-1]}_1} \\ \frac {dz^{[l]}_1}{da^{[l-1]}_1} \end{pmatrix}$$
+So, we can use chain rule to obtain $\frac {dL}{da^{[l-1]}_1}$ as below
 
-$ z^{[l](i)}_1 = w_{11}^{[l]}a^{[l-1](i)}_1 + w_{12}^{[l]}a^{[l-1](i)}_2+ \cdots w_{1nx}^{[l]}a^{[l-1](i)}_{nx} + b^{[l]}_1 $   
+$\frac {dL}{da^{[l-1]}_1} = \frac {dL}{dz^{[l]}_1} \frac {dz^{[l]}_1}{da^{[l-1]}_1} + \frac {dL}{dz^{[l]}_2} \frac {dz^{[l]}_2}{da^{[l-1]}_1} + .... + \frac {dL}{dz^{[l]}_{nl}} \frac {dz^{[l]}_{nl}}{da^{[l-1]}_1}$
 
+Let us rewrite the linear equations 
 
-$ d\mathbf A^{[l-1]}= \mathbf W^{[l]T} d\mathbf {z^{[l]}}$
+$ z^{[l]}_1 = w_{11}^{[l]}a^{[l-1]}_1 + w_{12}^{[l]}a^{[l-1]}_2+ \cdots w_{1,nl-1}^{[l]}a^{[l-1]}_{nl-1} + b^{[l]}_1 $ 
+
+$ z^{[l]}_2 = w_{21}^{[l]}a^{[l-1]}_1 + w_{22}^{[l]}a^{[l-1]}_2+ \cdots w_{2,nl-1}^{[l]}a^{[l-1]}_{nl-1} + b^{[l]}_2 $  
+.  
+.  
+
+$ z^{[l]}_{nl} = w_{nl,1}^{[l]}a^{[l-1]}_1 + w_{nl, 2}^{[l]}a^{[l-1]}_2+ \cdots w_{nl,nl-1}^{[l]}a^{[l-1]}_{nl-1} + b^{[l]}_2 $  
+
+Using above equations and the chain rule we get
+
+$\frac {dL}{da^{[l-1]}_1} = \frac {dL}{dz^{[l]}_1} w_{11}^{[l]} + \frac {dL}{dz^{[l]}_2} w_{21}^{[l]} + .... + \frac {dL}{dz^{[l]}_{nl}}w_{nl,1}^{[l]} $
+
+$\frac {dL}{da^{[l-1]}_2} = \frac {dL}{dz^{[l]}_1} w_{12}^{[l]} + \frac {dL}{dz^{[l]}_2} w_{22}^{[l]} + .... + \frac {dL}{dz^{[l]}_{nl}}w_{nl,2}^{[l]} $
+
+.   
+.
+
+$\frac {dL}{da^{[l-1]}_{nl-1}} = \frac {dL}{dz^{[l]}_1} w_{1,nl-1}^{[l]} + \frac {dL}{dz^{[l]}_2} w_{2,nl-1}^{[l]} + .... + \frac {dL}{dz^{[l]}_{nl}}w_{nl,nl-1}^{[l]} $
+
+Writting in matrix form
+
+$$\begin{pmatrix} \frac {dL}{da^{[l-1]}_1} \\ \frac {dL}{da^{[l-1]}_2} \\ \vdots \\ \frac {dL}{da^{[l-1]}_{nl-1}} \end{pmatrix} = \begin{pmatrix} w_{11}^{[l]} & w_{21}^{[l]} & \cdots & w_{nl,1}^{[l]} \\ w_{12}^{[l]} & w_{22}^{[l]} & \cdots & w_{nl,2}^{[l]} \\ \vdots & \vdots & \cdots & \vdots \\ w_{1,nl-1}^{[l]} & w_{2, nl-1}^{[l]} & \cdots & w_{nl,nl-1}^{[l]} \end{pmatrix} \begin{pmatrix} \frac {dL}{dz^{[l]}_1} \\ \frac {dL}{dz^{[l]}_2} \\ \vdots \\ \frac {dL}{dz^{[l]}_{nl}} \end{pmatrix}$$
+
+Taking layer superscript out of brackets
+
+$$\begin{pmatrix} \frac {dL}{da^{[l-1]}_1} \\ \frac {dL}{da^{[l-1]}_2} \\ \vdots \\ \frac {dL}{da^{[l-1]}_{nl-1}} \end{pmatrix} = \begin{pmatrix} w_{11} & w_{21} & \cdots & w_{nl,1} \\ w_{12} & w_{22} & \cdots & w_{nl,2} \\ \vdots & \vdots & \cdots & \vdots \\ w_{1,nl-1} & w_{2, nl-1} & \cdots & w_{nl,nl-1} \end{pmatrix}^{[l]} \begin{pmatrix} \frac {dL}{dz_1} \\ \frac {dL}{dz_2} \\ \vdots \\ \frac {dL}{dz_{nl}} \end{pmatrix}^{[l]}$$
+
+In vector form
+
+$ d\mathbf a^{[l-1]}= \mathbf W^{[l]T} d\mathbf {z^{[l]}}$
+
+The gradient of the loss with respect to the *input* is computed by taking the dot product of the transpose of *self.weights* and *output_gradient*.
+
+For $m$ training examples
+
+$ d\mathbf A^{[l-1]}= \mathbf W^{[l]T} d\mathbf {Z^{[l]}}$
+
+## Compute Weight Gradient of the Layer $\frac {d \mathbf J}{d\mathbf W^{[l]}}$
+
+So, $\frac {dL}{d\mathbf z^{[l]}}$ is known to us and we need to compute $\frac {dL}{d\mathbf W^{[l]}}$
+
+$$\frac {d \mathbf L}{d\mathbf W^{[l]}} = \begin{pmatrix} \frac {dL}{dw_{11}} & \frac {dL}{dw_{12}} & \cdots & \frac {dL}{dw_{1,nl-1}} \\ \frac {dL}{dw_{21}} & \frac {dL}{dw_{22}} & \cdots & \frac {dL}{dw_{2,nl-1}} \\ \vdots & \vdots & \vdots & \vdots \\  \frac {dL}{dw^{[l]}_{nl,1}} & \frac {dL}{dw_{nl,2}} & \cdots & \frac {dL}{dw_{nl,nl-1}} \end{pmatrix}^{[l]} $$
+
+Using chain rule, we get $\frac {dL}{dw_{11}^{[l]}}$ as below
+
+$\frac {dL}{dw^{[l]}_{11}} = \frac {dL}{dz^{[l]}_1} \frac {dz^{[l]}_1}{dw^{[l]}_{11}} + \frac {dL}{dz^{[l]}_2} \frac {dz^{[l]}_2}{dw^{[l]}_{11}} + .... + \frac {dL}{dz^{[l]}_{nl}} \frac {dz^{[l]}_{nl}}{dw^{[l]}_{11}}$
+
+Using forward equations and the chain rule we get 
+
+$\frac {dL}{dw^{[l]}_{11}} = \frac {dL}{dz^{[l]}_1} {a^{[l-1]}_{1}}$ ; $\frac {dL}{dw^{[l]}_{12}} = \frac {dL}{dz^{[l]}_1} {a^{[l-1]}_{2}}$
+
+Writting in matrix form
+
+$$\frac {dL}{d\mathbf W^{[l]}} = \begin{pmatrix} \frac {dL}{dz_1}a^{[l-1]}_{1} & \frac {dL}{dz_1}a^{[l-1]}_{2} & \cdots & \frac {dL}{dz_1}a^{[l-1]}_{nl-1} \\ \frac {dL}{dz_2}a^{[l-1]}_{1} & \frac {dL}{dz_2}a^{[l-1]}_{2} & \cdots & \frac {dL}{dz_2}a^{[l-1]}_{nl-1} \\ \vdots & \vdots & \vdots & \vdots \\  \frac {dL}{dz_{nl}}a^{[l-1]}_{1} & \frac {dL}{dz_{nl}}a^{[l-1]}_{2} & \cdots & \frac {dL}{dz_{nl}}a^{[l-1]}_{nl-1} \end{pmatrix}^{[l]} $$
+
+$$\frac {dL}{d\mathbf W^{[l]}} = \begin{pmatrix} \frac {dL}{dz_1^{[l]}} \\ \frac {dL}{dz_2^{[l]}} \\ \vdots \\  \frac {dL}{dz_{nl}^{[l]}} \end{pmatrix} \begin{pmatrix} a^{[l-1]}_{1} & a^{[l-1]}_{2} & \cdots & a^{[l-1]}_{nl-1} \end{pmatrix} $$
+
+In vector form
 
 $ d\mathbf W^{[l]}= \frac {1}{m} d\mathbf z^{[l]} \mathbf a^{[l-1]T}$
 
-$ d\mathbf b^{[l]}= \frac{1}{m} \sum\limits_{i = 1}^{m}(d\mathbf z^{[l]})$
+For $m$ training examples
 
+$ d\mathbf W^{[l]}= \frac {1}{m} d\mathbf Z^{[l]} \mathbf A^{[l-1]T}$
 
-The gradient of the loss with respect to the *input* is computed by taking the dot product of the transpose of *self.weights* and *output_gradient*.
+Similarly, the gradients of bias for single training example
+
+$ d\mathbf b^{[l]}= \frac{1}{m} \sum\limits_{i = 1}^{m}(d\mathbf Z^{[l]})$
 
 The *weights* and *bias* are updated using gradient descent: the *weights* are updated by subtracting the product of *learning_rate* and *weights_gradient*, and the *bias* is updated by subtracting the product of *learning_rate* and *output_gradient*.
 
@@ -335,6 +411,9 @@ class Dense(Layer):
     self.bias -= learning_rate * output_gradient
     return input_gradient
 ```
+
+**Sections below are to be updated ...**
+
 It takes two arguments *output_gradient* and *learning_rate*. *output_gradient* represents the gradient of the loss with respect to the *output* of the 'Dense' layer.
 
 The method performs the backward pass by calculating the gradient of the loss with respect to the *weights* and *input* of the `Dense` layer.
@@ -363,7 +442,6 @@ class Activation(Layer):
 
   def backward(self, output_gradient, learning_rate):
     return np.multiply(output_gradient, self.activation_prime(self.input))
-
 ```
 **Activation class (subclass of Layer)**
 
@@ -444,23 +522,7 @@ class Square(Activation):
 ```
 
 ```js
-
 Layer=Square()
 Layer.forward(2)
 Layer.backward(5,0.07)
-
-```
-
-```js
-def mse(y_true, y_pred):
-  return np.mean(np.power(y_true - y_pred, 2))
-
-def mse_prime(y_true, y_pred):
-  return 2 * (y_pred - y_true) / np.size(y_true)
-
-def binary_cross_entropy(y_true, y_pred):
-  return np.mean(-y_true * np.log(y_pred) - (1 - y_true) * np.log(1 - y_pred))
-
-def binary_cross_entropy_prime(y_true, y_pred):
-  return ((1 - y_true) / (1 - y_pred) - y_true / y_pred) / np.size(y_true)
 ```
