@@ -9,6 +9,14 @@
       /* Optional: nicer wide layout for equations */
       .content { max-width: 1000px; }
       .markdown-section { overflow-wrap: anywhere; }
+      
+      .note-box {
+        border: 2px solid #2196f3;
+        background: #e3f2fd;
+        padding: 10px;
+        border-radius: 8px;
+        margin: 10px 0;
+      }
     </style>
 </head>
 <body>
@@ -18,16 +26,16 @@
   <!-- Docsify configuration -->
   <script>
     window.$docsify = {
-      name: 'Linear Regression - MF',
+      name: 'Working with Virtual Environment',
       repo: '',
       loadSidebar: true,      // Enable sidebar
       subMaxLevel: 2,         // optional: show nested headers
       loadNavbar: false,      // optional: disable top nav
       copyCode: {
-          buttonText: "📋 Copy", // text on the button
-          errorText: "✖ Failed",
-          successText: "✔ Copied!",
-        },
+        buttonText: '📋 Copy', // text on the button
+        errorText: '✖ Failed',
+        successText: '✔ Copied!'
+      },
       plugins: [
         function (hook) {
           hook.doneEach(function() {
@@ -52,7 +60,6 @@
     <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
     
     <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
-
     <!-- 2) MathJax v3 engine (no async/defer; keep order) -->
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <!-- 3) Docsify ⇄ MathJax glue -->
